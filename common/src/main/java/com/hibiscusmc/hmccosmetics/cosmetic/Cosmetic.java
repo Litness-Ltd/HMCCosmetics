@@ -3,16 +3,15 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,13 +25,16 @@ public abstract class Cosmetic {
 
     static {
         UNDEFINED_DISPLAY_ITEM_STACK = new ItemStack(Material.BARRIER);
-        UNDEFINED_DISPLAY_ITEM_STACK.editMeta(meta -> {
-            meta.displayName(Component.text("Undefined Item Display", NamedTextColor.RED));
-            meta.lore(List.of(
-                Component.text("Please check your configurations & console to", NamedTextColor.RED),
-                Component.text("ensure there are no errors.", NamedTextColor.RED)
-            ));
-        });
+
+        ItemMeta meta = UNDEFINED_DISPLAY_ITEM_STACK.getItemMeta();
+        if (meta != null) {
+            // Legacy methods for Spigot >:(
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&cUndefined Item Display"));
+            meta.setLore(List.of(
+                    ChatColor.translateAlternateColorCodes('&', "&cPlease check your configurations & console to"),
+                    ChatColor.translateAlternateColorCodes('&', "&censure there are no errors.")));
+        }
+        UNDEFINED_DISPLAY_ITEM_STACK.setItemMeta(meta);
     }
 
     /** Identifier of the cosmetic. */
