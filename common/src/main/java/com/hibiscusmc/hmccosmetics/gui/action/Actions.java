@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public class Actions {
@@ -30,7 +31,6 @@ public class Actions {
     private static final ActionCosmeticHide ACTION_HIDE = new ActionCosmeticHide();
     private static final ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
 
-
     public static Action getAction(@NotNull String id) {
         return actions.get(id.toUpperCase());
     }
@@ -45,13 +45,13 @@ public class Actions {
 
     public static void runActions(Player viewer, CosmeticHolder cosmeticHolder, @NotNull List<String> raw) {
         for (String a : raw) {
-            String id = StringUtils.substringBetween(a, "[", "]").toUpperCase();
+            String id = StringUtils.substringBetween(a, "[", "]");
             String message = StringUtils.substringAfter(a, "] ");
             MessagesUtil.sendDebugMessages("ID is " + id + " // Raw Data is " + message);
-            if (isAction(id)) {
+            if (id != null && isAction(id.toUpperCase())) {
                 getAction(id).run(viewer, cosmeticHolder, message);
             } else {
-                MessagesUtil.sendDebugMessages("Possible ids: " + actions.keySet());
+                MessagesUtil.sendDebugMessages("Invalid Action ID (" + id + ") used in menus (Full raw: '" + a + "'). Make sure all actions are properly typed out. Here are all possible actions: " + actions.keySet(), Level.WARNING);
             }
         }
     }
