@@ -228,9 +228,9 @@ public class Settings {
         lockedCosmeticColor = shadingSettings.node(LOCKED_COSMETIC_COLOR_PATH).getString();
 
         ConfigurationNode cosmeticTypeSettings = menuSettings.node(COSMETIC_TYPE_SETTINGS_PATH);
-        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ALL");
-        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
-        cosmeticDyeClickType = cosmeticTypeSettings.node(DYE_CLICK_TYPE).getString("ALL");
+        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ANY");
+        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ANY");
+        cosmeticDyeClickType = cosmeticTypeSettings.node(DYE_CLICK_TYPE).getString("ANY");
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
         balloonOffset = loadVector(balloonSection);
