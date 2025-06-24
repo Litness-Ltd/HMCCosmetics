@@ -139,7 +139,7 @@ tasks {
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/build/libs/ProtocolLib.jar")
-            url("https://download.luckperms.net/1584/bukkit/loader/LuckPerms-Bukkit-5.5.0.jar")
+            url("https://download.luckperms.net/1584/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
         }
     }
 
