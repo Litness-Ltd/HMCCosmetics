@@ -3,7 +3,7 @@
 #
 config-version: 1
 
-default-menu: defaultmenu
+default-menu: defaultmenu_hats
 debug-mode: false
 database-settings:
   type: sqlite # SQLite (Default), MYSQL, NONE
