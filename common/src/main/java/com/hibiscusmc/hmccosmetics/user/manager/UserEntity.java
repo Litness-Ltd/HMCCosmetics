@@ -99,7 +99,7 @@ public class UserEntity {
             // First person backpacks need both packets to rotate properly, otherwise they look off
             // Regular backpacks just need the look packet
             if (additonalPacket) HMCCPacketManager.sendRotationPacket(entity, yaw, false, getViewers());
-            HMCCPacketManager.sendLookPacket(entity, location, getViewers());
+            HMCCPacketManager.sendRotateHeadPacket(entity, location, getViewers());
         }
     }
 }

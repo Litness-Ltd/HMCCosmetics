@@ -603,7 +603,7 @@ public class CosmeticUser implements CosmeticHolder {
      * @return Entity
      */
     public Entity getEntity() {
-        return Bukkit.getEntity(uniqueId);
+        return getPlayer();
     }
 
     public Color getCosmeticColor(CosmeticSlot slot) {
