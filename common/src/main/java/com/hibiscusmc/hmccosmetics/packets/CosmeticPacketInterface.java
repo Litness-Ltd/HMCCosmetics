@@ -127,18 +127,17 @@ public class CosmeticPacketInterface implements PacketInterface {
 
         Optional<CosmeticUser> optionalCosmeticUser = CosmeticUsers.values().stream().filter(user -> user.getPlayer() != null).filter(user -> ownerId == user.getPlayer().getEntityId()).findFirst();
         if (optionalCosmeticUser.isEmpty()) return PacketAction.NOTHING;
-        Player entity = optionalCosmeticUser.get().getPlayer();
-
-        CosmeticUser user = CosmeticUsers.getUser(entity.getUniqueId());
-        if (user == null) return PacketAction.NOTHING;
+        CosmeticUser user = optionalCosmeticUser.get();
         MessagesUtil.sendDebugMessages("Mount Packet Sent - " + user.getUniqueId());
 
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return PacketAction.NOTHING;
         if (user.getUserBackpackManager() == null)  return PacketAction.NOTHING;
 
-        List<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getEntityManager().getIds());
-        for (int passenger : originalPassengers) passengers.add(passenger);
-
+        ArrayList<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getEntityManager().getIds());
+        for (int i : originalPassengers) {
+            if (passengers.contains(i)) continue; // Prevent same id from being used twice in different places
+            passengers.add(i);
+        }
         wrapper.setPassengers(passengers);
         return PacketAction.CHANGED;
     }
