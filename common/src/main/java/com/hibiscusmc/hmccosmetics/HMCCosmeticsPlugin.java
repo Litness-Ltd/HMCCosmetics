@@ -64,7 +64,12 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
         if (!Path.of(getDataFolder().getPath(), "translations.yml").toFile().exists()) saveResource("translations.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
-        if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
+        if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) {
+            saveResource("menus/defaultmenu_hats.yml", false);
+            saveResource("menus/defaultmenu_balloons.yml", false);
+            saveResource("menus/defaultmenu_hands.yml", false);
+            saveResource("menus/defaultmenu_backpacks.yml", false);
+        }
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
