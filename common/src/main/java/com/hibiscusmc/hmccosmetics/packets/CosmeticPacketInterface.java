@@ -27,27 +27,32 @@ public class CosmeticPacketInterface implements PacketInterface {
     @Override
     public PacketAction writeContainerContent(@NotNull Player player, @NotNull ContainerContentWrapper wrapper) {
         int windowId = wrapper.getWindowId();
+        MessagesUtil.sendDebugMessages("writeContainerContent (windowid: " + windowId + " )");
         if (windowId != 0) return PacketAction.NOTHING;
         List<ItemStack> slotData = wrapper.getSlotData();
 
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return PacketAction.NOTHING;
 
-        HashMap<Integer, ItemStack> items = new HashMap<>();
+        HashMap<Integer, ItemStack> cosmeticItems = new HashMap<>();
 
-        if (!user.isInWardrobe()) for (Cosmetic cosmetic : user.getCosmetics()) if (cosmetic instanceof CosmeticArmorType armorType) {
-            boolean requireEmpty = Settings.getSlotOption(armorType.getEquipSlot()).isRequireEmpty();
-            boolean isAir = user.getPlayer().getInventory().getItem(armorType.getEquipSlot()).getType().isAir();
-            MessagesUtil.sendDebugMessages("Menu Fired (Checks) - " + armorType.getId() + " - " + requireEmpty + " - " + isAir);
-            if (requireEmpty && !isAir) continue;
-            items.put(HMCCInventoryUtils.getPacketArmorSlot(armorType.getEquipSlot()), user.getUserCosmeticItem(armorType));
+        if (!user.isInWardrobe()) {
+            for (Cosmetic cosmetic : user.getCosmetics()) {
+                if (cosmetic instanceof CosmeticArmorType armorType) {
+                    boolean requireEmpty = Settings.getSlotOption(armorType.getEquipSlot()).isRequireEmpty();
+                    boolean isAir = user.getPlayer().getInventory().getItem(armorType.getEquipSlot()).getType().isAir();
+                    MessagesUtil.sendDebugMessages("Menu Fired (Checks) - " + armorType.getId() + " - " + requireEmpty + " - " + isAir);
+                    if (requireEmpty && !isAir) continue;
+                    cosmeticItems.put(HMCCInventoryUtils.getPacketArmorSlot(armorType.getEquipSlot()), user.getUserCosmeticItem(armorType));
+                }
+            }
         }
 
         for (int slot = 0; slot < 46; slot++) {
             if ((slot >= 5 && slot <= 8) || slot == 45) {
-                if (!items.containsKey(slot)) continue;
-                slotData.set(slot, items.get(slot));
-                if (Settings.isDebugMode()) MessagesUtil.sendDebugMessages("Set " + slot + " as " + items.get(slot));
+                if (!cosmeticItems.containsKey(slot)) continue;
+                slotData.set(slot, cosmeticItems.get(slot));
+                if (Settings.isDebugMode()) MessagesUtil.sendDebugMessages("Set " + slot + " as " + cosmeticItems.get(slot));
             }
         }
 

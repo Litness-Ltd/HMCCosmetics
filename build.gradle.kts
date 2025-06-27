@@ -91,7 +91,7 @@ allprojects {
         compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.7.0-d301221e")
+        compileOnly("me.lojosho:HibiscusCommons:0.7.0-491f46f")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.23.0")
@@ -144,6 +144,7 @@ tasks {
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
+            github("Test-Account666", "PlugManX", "2.4.1", "PlugManX-2.4.1.jar")
         }
     }
 
