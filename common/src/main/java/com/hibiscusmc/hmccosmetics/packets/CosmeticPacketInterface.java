@@ -25,7 +25,7 @@ import java.util.*;
 public class CosmeticPacketInterface implements PacketInterface {
 
     @Override
-    public PacketAction writeContainerContent(@NotNull Player player, @NotNull ContainerContentWrapper wrapper) {
+    public @NotNull PacketAction writeContainerContent(@NotNull Player player, @NotNull ContainerContentWrapper wrapper) {
         int windowId = wrapper.getWindowId();
         MessagesUtil.sendDebugMessages("writeContainerContent (windowid: " + windowId + " )");
         if (windowId != 0) return PacketAction.NOTHING;
@@ -62,7 +62,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction writeSlotContent(@NotNull Player player, @NotNull SlotContentWrapper wrapper) {
+    public @NotNull PacketAction writeSlotContent(@NotNull Player player, @NotNull SlotContentWrapper wrapper) {
         int windowId = wrapper.getWindowId();
         int slot = wrapper.getSlot();
         ItemStack itemStack = wrapper.getItemStack();
@@ -86,7 +86,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction writeEquipmentContent(@NotNull Player player, @NotNull EntityEquipmentWrapper wrapper) {
+    public @NotNull PacketAction writeEquipmentContent(@NotNull Player player, @NotNull EntityEquipmentWrapper wrapper) {
         if (player.getEntityId() != wrapper.getEntityId()) return PacketAction.NOTHING;
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null || user.isInWardrobe()) return PacketAction.NOTHING;
@@ -121,7 +121,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction writePassengerContent(@NotNull Player player, @NotNull PassengerWrapper wrapper) {
+    public @NotNull PacketAction writePassengerContent(@NotNull Player player, @NotNull PassengerWrapper wrapper) {
         CosmeticUser viewerUser = CosmeticUsers.getUser(player);
         if (viewerUser == null || viewerUser.isInWardrobe()) return PacketAction.NOTHING;
 
@@ -148,7 +148,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction readInventoryClick(@NotNull Player player, @NotNull InventoryClickWrapper wrapper) {
+    public @NotNull PacketAction readInventoryClick(@NotNull Player player, @NotNull InventoryClickWrapper wrapper) {
         int clickType = wrapper.getClickType();
         int slotNumber = wrapper.getSlotNumber();
         if (clickType != 0 || slotNumber == -999) return PacketAction.NOTHING;
@@ -164,7 +164,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction readPlayerAction(@NotNull Player player, @NotNull PlayerActionWrapper wrapper) {
+    public @NotNull PacketAction readPlayerAction(@NotNull Player player, @NotNull PlayerActionWrapper wrapper) {
         String actionType = wrapper.getActionType();
         MessagesUtil.sendDebugMessages("EntityStatus Initial " + player.getEntityId() + " - " + actionType);
         // If it's not SWAP_ITEM_WITH_OFFHAND, ignore
@@ -180,7 +180,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction readPlayerArm(@NotNull Player player) {
+    public @NotNull PacketAction readPlayerArm(@NotNull Player player, @NotNull PlayerSwingWrapper wrapper) {
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null || !user.isInWardrobe() || !user.getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return PacketAction.NOTHING;
 
@@ -191,7 +191,7 @@ public class CosmeticPacketInterface implements PacketInterface {
     }
 
     @Override
-    public PacketAction readEntityHandle(@NotNull Player player) {
+    public @NotNull PacketAction readEntityHandle(@NotNull Player player, @NotNull PlayerInteractWrapper wrapper) {
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null || !user.isInWardrobe()) return PacketAction.NOTHING;
         else return PacketAction.CANCELLED;
