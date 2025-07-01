@@ -24,7 +24,6 @@ import java.util.*;
 public class HMCCPacketManager extends PacketManager {
 
     private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
-    private final static float ROTATION_FACTOR = 256.0F / 360.0F;
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
