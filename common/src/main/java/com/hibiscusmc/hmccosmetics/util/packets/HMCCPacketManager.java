@@ -24,6 +24,7 @@ import java.util.*;
 public class HMCCPacketManager extends PacketManager {
 
     private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
+    private final static float ROTATION_FACTOR = 256.0F / 360.0F;
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
@@ -121,11 +122,7 @@ public class HMCCPacketManager extends PacketManager {
             boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        float ROTATION_FACTOR = 256.0F / 360.0F;
-        byte yaw = (byte) (location.getYaw() * ROTATION_FACTOR);
-        byte pitch = (byte) (location.getPitch() * ROTATION_FACTOR);
-
-        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw, pitch, onGround, sendTo);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, location.getYaw(), location.getPitch(), onGround, sendTo);
     }
 
     public static void sendRotationPacket(
@@ -134,8 +131,7 @@ public class HMCCPacketManager extends PacketManager {
             boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        float ROTATION_FACTOR = 256.0F / 360.0F;
-        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw * ROTATION_FACTOR, 0, onGround, sendTo);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw, 0, onGround, sendTo);
     }
 
     /**
