@@ -91,7 +91,7 @@ allprojects {
         compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.7.0-9ced7fd8")
+        compileOnly("me.lojosho:HibiscusCommons:0.7.1-6c4e262c")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.23.0")
@@ -106,7 +106,7 @@ allprojects {
             exclude("net.kyori") // Already have adventure API
         }
         implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-        implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
+        implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.8")
     }
 
     tasks {
