@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,8 +57,12 @@ public abstract class Cosmetic {
     /** Whether the cosmetic is dyeable or not. */
     private boolean dyeable;
 
+    /** The config for the cosmetic */
+    private ConfigurationNode config;
+
     protected Cosmetic(@NotNull String id, @NotNull ConfigurationNode config) {
         this.id = id;
+        this.config = config;
 
         if (!config.node("permission").virtual()) {
             this.permission = config.node("permission").getString();
@@ -134,5 +139,15 @@ public abstract class Cosmetic {
             MessagesUtil.sendDebugMessages("Fatal error encountered for " + getId() + " regarding Serialization of item", Level.SEVERE);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * While cosmetics registered in HMCC are made through a configuration, cosmetics registered from other plugins
+     * may not and instead opt for {@link Cosmetic#Cosmetic(String, String, ItemStack, String, CosmeticSlot, boolean)}, which doesn't use a config.
+     * This should be used only for reference.
+     */
+    @ApiStatus.Experimental
+    public @Nullable ConfigurationNode getConfig() {
+        return config;
     }
 }
