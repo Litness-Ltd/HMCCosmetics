@@ -13,7 +13,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
@@ -343,7 +342,7 @@ public class CosmeticUser implements CosmeticHolder {
         if (cosmetic instanceof CosmeticArmorType armorType) {
             item = armorType.getItem(this, cosmetic.getItem());
         }
-        if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticMainhandType) {
+        if (cosmetic instanceof CosmeticBackpackType) {
             item = cosmetic.getItem();
         }
         if (cosmetic instanceof CosmeticBalloonType) {

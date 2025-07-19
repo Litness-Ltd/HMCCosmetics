@@ -22,8 +22,6 @@ public abstract class CosmeticProvider {
         Map.entry(CosmeticSlot.BOOTS, CosmeticArmorType::new),
         Map.entry(CosmeticSlot.OFFHAND, CosmeticArmorType::new),
 
-        Map.entry(CosmeticSlot.MAINHAND, CosmeticMainhandType::new),
-
         Map.entry(CosmeticSlot.BACKPACK, CosmeticBackpackType::new),
 
         Map.entry(CosmeticSlot.BALLOON, CosmeticBalloonType::new)
