@@ -85,6 +85,7 @@ allprojects {
             exclude(group = "com.google.code.gson")
             exclude(group = "it.unimi.dsi")
             exclude(group = "com.sk89q.jnbt")
+            exclude(group = "org.enginehub.lin-bus.format")
         }
         compileOnly("io.github.toxicity188:BetterHud-standard-api:1.12") //Standard api
         compileOnly("io.github.toxicity188:BetterHud-bukkit-api:1.12") //Platform api
