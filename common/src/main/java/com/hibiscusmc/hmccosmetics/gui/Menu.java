@@ -182,18 +182,25 @@ public class Menu {
             if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
         });
 
+        Runnable openGuiTask = () -> {
+            gui.open(viewer);
+            updateMenu(viewer, cosmeticHolder, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
+        };
+
         // API
         if (cosmeticHolder instanceof CosmeticUser user) {
             PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(event));
-            if (event.isCancelled()) return;
+            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                Bukkit.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    openGuiTask.run();
+                }
+            });
         }
         // Internal
-
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            gui.open(viewer);
-            updateMenu(viewer, cosmeticHolder, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
-        });
+        else {
+            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), openGuiTask);
+        }
     }
 
     private void updateMenu(Player viewer, CosmeticHolder cosmeticHolder, Gui gui) {
