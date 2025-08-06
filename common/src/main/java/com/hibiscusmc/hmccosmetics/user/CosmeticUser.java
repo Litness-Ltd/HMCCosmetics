@@ -36,6 +36,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -148,6 +149,11 @@ public class CosmeticUser implements CosmeticHolder {
             MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
             showCosmetics(HiddenReason.WORLD);
         }
+
+        if (bukkitPlayer != null && bukkitPlayer.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            hideCosmetics(HiddenReason.POTION);
+        }
+
         if (Settings.isAllPlayersHidden()) {
             hideCosmetics(HiddenReason.DISABLED);
         }
