@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -105,8 +106,8 @@ public class TypeCosmetic extends Type {
                 MessagesUtil.sendDebugMessages("Preparing for on-equip with the following checks:");
                 MessagesUtil.sendDebugMessages("CosmeticDyeable? " + cosmetic.isDyeable() + " / isDyeClick? " + isDyeClick + " / isHMCColorActive? " + Hooks.isActiveHook("HMCColor"));
                 // TODO: Redo this
-                if (cosmetic.isDyeable() && isDyeClick && Hooks.isActiveHook("HMCColor")) {
-                    DyeMenu.openMenu(viewer, cosmeticHolder, cosmetic);
+                if (cosmetic.isDyeable() && isDyeClick && DyeMenuProvider.hasMenuProvider()) {
+                    DyeMenuProvider.openMenu(viewer, cosmeticHolder, cosmetic);
                 } else if (isRequiredClick) {
                     cosmeticHolder.addCosmetic(cosmetic);
                 }

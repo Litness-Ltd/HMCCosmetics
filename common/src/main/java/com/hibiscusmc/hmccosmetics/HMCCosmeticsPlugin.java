@@ -11,6 +11,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
+import com.hibiscusmc.hmccosmetics.gui.special.impl.HMCColorDyeMenu;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
@@ -29,6 +31,7 @@ import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.shaded.configupdater.common.config.CommentedConfiguration;
 import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.ConfigurationOptions;
@@ -109,6 +112,11 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
+        }
+
+        // HMCColor
+        if (Hooks.isActiveHook("HMCColor")) {
+            DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
         }
     }
 

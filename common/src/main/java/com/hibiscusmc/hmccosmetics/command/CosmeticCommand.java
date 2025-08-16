@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -329,7 +330,7 @@ public class CosmeticCommand implements CommandExecutor {
                     }
                     user.addCosmetic(cosmetic, color); // #FFFFFF
                 } else {
-                    DyeMenu.openMenu(user, cosmetic);
+                    DyeMenuProvider.openMenu(player, user, cosmetic);
                 }
             }
             case ("setwardrobesetting") -> {
