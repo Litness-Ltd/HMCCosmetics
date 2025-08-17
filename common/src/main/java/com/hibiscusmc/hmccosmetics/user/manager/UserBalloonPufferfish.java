@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -36,6 +37,12 @@ public class UserBalloonPufferfish extends UserEntity {
     public void destroyPufferfish() {
         HMCCPacketManager.sendEntityDestroyPacket(pufferFishEntityId, getViewers());
         getViewers().clear();
+        destroyed = true;
+    }
+
+    public void destroyPufferfish(List<Player> viewers) {
+        HMCCPacketManager.sendEntityDestroyPacket(pufferFishEntityId, viewers);
+        //getViewers().clear();
         destroyed = true;
     }
 

@@ -99,7 +99,12 @@ public class UserBalloonManager {
     }
 
     public void remove() {
-        pufferfish.destroyPufferfish();
+        // This code is like a brick road, always bumpy.
+        // Basically, the balloon viewers ignore people in wardrobe, which well, if your the user in the wardrobe, ain't including you.
+        // This manually passes in the viewers for it to destroy, which includes the person in the wardrobe
+        if (user.getPlayer() != null && user.isInWardrobe()) pufferfish.destroyPufferfish(List.of(user.getPlayer()));
+        else pufferfish.destroyPufferfish();
+
         if (balloonType == BalloonType.MODELENGINE) {
             final ModeledEntity entity = ModelEngineAPI.getModeledEntity(modelEntity);
             if (entity == null) {
