@@ -310,13 +310,17 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                String rawSlot = args[1];
+                final String rawSlot = args[1];
                 if (!CosmeticSlot.contains(rawSlot)) {
                     if (!silent) MessagesUtil.sendMessage(player, "invalid-slot");
                     return true;
                 }
-                CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot);
-                Cosmetic cosmetic = user.getCosmetic(slot);
+                final CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot); // This is checked above. While IDEs may say the slot might be null, it will not be.
+                final Cosmetic cosmetic = user.getCosmetic(slot);
+                if (cosmetic == null) {
+                    if (!silent) MessagesUtil.sendMessage(player, "invalid-slot");
+                    return true;
+                }
 
                 if (args.length >= 3) {
                     if (args[2].isEmpty()) {
