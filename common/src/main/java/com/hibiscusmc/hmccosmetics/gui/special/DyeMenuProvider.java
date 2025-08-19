@@ -27,8 +27,12 @@ public class DyeMenuProvider {
      * @param viewer The viewer of the menu
      * @param cosmeticHolder The cosmetic holder that the player viewer wishing to modify (could be themselves or another CosmeticHolder)
      * @param cosmetic The cosmetic the user wishes to dye
+     * @throws IllegalStateException IllegalStateException will be thrown if the dye menu instance is null (Check {@link DyeMenuProvider#hasMenuProvider()} before calling)
      */
-    public static void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic) {
+    public static void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic) throws IllegalStateException {
+        if (instance == null) {
+            throw new IllegalStateException("Unable to open a dye menu without instance of it.");
+        }
         instance.openMenu(viewer, cosmeticHolder, cosmetic);
     }
 

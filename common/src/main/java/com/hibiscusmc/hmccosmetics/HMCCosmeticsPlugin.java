@@ -116,7 +116,11 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // HMCColor
         if (Hooks.isActiveHook("HMCColor")) {
-            DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
+            try {
+                DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
+            } catch (IllegalStateException e) {
+                getLogger().warning("Unable to set HMCColor as the dye menu. There is likely another plugin registering another dye menu.");
+            }
         }
     }
 
