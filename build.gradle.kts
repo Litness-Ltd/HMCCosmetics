@@ -146,6 +146,7 @@ tasks {
             hangar("PlaceholderAPI", "2.11.6")
             url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
             github("Test-Account666", "PlugManX", "2.4.1", "PlugManX-2.4.1.jar")
+            github("gecolay", "GSit", "2.4.3", "GSit-2.4.3.jar")
         }
     }
 
