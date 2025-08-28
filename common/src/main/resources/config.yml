@@ -8,11 +8,11 @@ debug-mode: false
 database-settings:
   type: sqlite # SQLite (Default), MYSQL, NONE
   mysql:
-    database: database
-    password: cherryBomb
+    database: "database"
+    password: "cherryBomb"
     port: 3306
-    host: localhost
-    user: username
+    host: "localhost"
+    user: "username"
   delay:
     enabled: false # This is for if other plugins need to handle certain aspects of a player first.
     delay: 20 # In ticks
@@ -85,6 +85,7 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+
 menu-settings:
   click-cooldown:
     enabled: true
@@ -122,8 +123,9 @@ hook-settings:
     # could cause console spam as HMCCosmetics has to reload itself as well.
     reload-on-change: false
   nexo:
-    # This causes the plugin to reload itself after any Nexo change. This keeps the plugin fully up to date with Nexo
-    reload-on-change: true
+    # This causes the plugin to reload itself after any Nexo change. This keeps the plugin fully up to date with Nexo, but
+    # could cause console spam as HMCCosmetics has to reload itself as well.
+    reload-on-change: false
   worldguard:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
