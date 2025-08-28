@@ -8,11 +8,11 @@ debug-mode: false
 database-settings:
   type: sqlite # SQLite (Default), MYSQL, NONE
   mysql:
-    database: database
-    password: cherryBomb
+    database: "database"
+    password: "cherryBomb"
     port: 3306
-    host: localhost
-    user: username
+    host: "localhost"
+    user: "username"
   delay:
     enabled: false # This is for if other plugins need to handle certain aspects of a player first.
     delay: 20 # In ticks
@@ -85,6 +85,7 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+
 menu-settings:
   click-cooldown:
     enabled: true
@@ -107,8 +108,8 @@ menu-settings:
     locked-cosmetic-color: "<red>"
   cosmetic-type:
     # This allows you to specify if it should require a special click type for the interaction to work.
-    equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
-    unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
+    equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
+    unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
 dye-menu:
   # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
   # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
@@ -122,7 +123,8 @@ hook-settings:
     # could cause console spam as HMCCosmetics has to reload itself as well.
     reload-on-change: false
   nexo:
-    # This causes the plugin to reload itself after any Nexo change. This keeps the plugin fully up to date with Nexo
+    # This causes the plugin to reload itself after any Nexo change. This keeps the plugin fully up to date with Nexo, but
+    # could cause console spam as HMCCosmetics has to reload itself as well.
     reload-on-change: true
   worldguard:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
