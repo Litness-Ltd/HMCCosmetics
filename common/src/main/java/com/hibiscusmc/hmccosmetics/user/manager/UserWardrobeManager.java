@@ -26,6 +26,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -141,6 +143,10 @@ public class UserWardrobeManager {
                 HMCCPacketManager.sendPlayerOverlayPacket(NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
                 NMSHandlers.getHandler().getPacketHandler().sendScoreboardHideNamePacket(player, npcName);
+                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
+                if (scaleAttribute != null) {
+                    HMCCPacketManager.sendEntityScalePacket(NPC_ID, scaleAttribute.getValue(), viewer);
+                }
             }, 4);
 
             // Location
