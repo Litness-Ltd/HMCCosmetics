@@ -162,6 +162,6 @@ public class HMCCServerUtils {
     }
 
     public static NamespacedKey getCosmemeticMobKey() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob");
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticmob");
     }
 }

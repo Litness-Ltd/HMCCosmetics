@@ -141,8 +141,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
-            return;
+        if (!entity.getPersistentDataContainer().has(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN)) return;
         event.setCancelled(true);
     }
 
@@ -363,9 +362,8 @@ public class PlayerGameListener implements Listener {
         final Player player = event.getPlayer();
         final Entity entity = event.getRightClicked();
         // Balloons are technically actual entities, so we need to cancel any interactions with them
-        if (entity.getPersistentDataContainer().has(HMCCServerUtils.getCosmemeticMobKey())) {
-            event.setCancelled(true);
-        }
+        if (!entity.getPersistentDataContainer().has(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN)) return;
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

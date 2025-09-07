@@ -50,7 +50,7 @@ public class UserBalloonManager {
             e.setSmall(true);
             e.setMarker(true);
             e.setPersistent(false);
-            e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.SHORT, Short.valueOf("1"));
+            e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN, true);
         });
     }
 
