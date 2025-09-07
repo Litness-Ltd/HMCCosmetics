@@ -23,6 +23,7 @@ import java.util.*;
 
 public class HMCCPacketManager extends PacketManager {
 
+    // The cloud effect map, in case it gets lost: Map<Integer, Number> dataValues = Map.of(0, (byte) 0x20, 8, 0f);
     private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
 
     public static void sendEntitySpawnPacket(
@@ -83,15 +84,6 @@ public class HMCCPacketManager extends PacketManager {
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void sendArmorstandMetadata(
-            int entityId,
-            List<Player> sendTo
-    ) {
-        byte mask = (byte) (Settings.isBackpackPreventDarkness() ? 0x21 : 0x20);
-        Map<Integer, Number> dataValues = Map.of(0, mask, 15, (byte) 0x10);
-        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
-    }
-
     public static void sendInvisibilityPacket(
             int entityId,
             List<Player> sendTo
@@ -99,12 +91,48 @@ public class HMCCPacketManager extends PacketManager {
         NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, Map.of(0, (byte) 0x20), sendTo);
     }
 
-    public static void sendCloudEffect(
+    public static void spawnCloudAndHandleEffect(
+            int entityId,
+            Location location,
+            UUID uuid,
+            List<Player> sendTo
+    ) {
+        NMSHandlers.getHandler().getPacketHandler().sendInvisibleParticleCloud(entityId, location, uuid, sendTo);
+    }
+
+    /**
+     * This handles both spawn + metadata in a bundle packet
+     * @param entityId
+     * @param location
+     * @param uuid
+     * @param sendTo
+     */
+    public static void spawnInvisibleArmorstand(
+            int entityId,
+            Location location,
+            UUID uuid,
+            List<Player> sendTo
+    ) {
+        byte mask = getMask();
+        NMSHandlers.getHandler().getPacketHandler().sendInvisibleArmorstand(entityId, location, uuid, mask, sendTo);
+    }
+
+    /**
+     * This is just a normal meta data packet (non-bundled)
+     * @param entityId
+     * @param sendTo
+     */
+    public static void sendArmorstandMetadata(
             int entityId,
             List<Player> sendTo
     ) {
-        Map<Integer, Number> dataValues = Map.of(0, (byte) 0x20, 8, 0f);
+        byte mask = getMask();
+        Map<Integer, Number> dataValues = Map.of(0, mask, 15, (byte) 0x10);
         NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
+    }
+
+    private static byte getMask() {
+        return (byte) (Settings.isBackpackPreventDarkness() ? 0x21 : 0x20);
     }
 
     public static void sendRotationPacket(

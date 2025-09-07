@@ -55,8 +55,8 @@ public class UserBackpackManager {
         getEntityManager().setIds(List.of(invisibleArmorStand));
         getEntityManager().teleport(user.getEntity().getLocation());
         List<Player> outsideViewers = getEntityManager().getViewers();
-        HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), getEntityManager().getViewers());
-        HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), outsideViewers);
+
+        HMCCPacketManager.spawnInvisibleArmorstand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID(), outsideViewers);
 
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
@@ -81,8 +81,7 @@ public class UserBackpackManager {
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
             for (int i = particleCloud.size(); i < cosmeticBackpackType.getHeight(); i++) {
                 int entityId = ServerUtils.getNextEntityId();
-                HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
-                HMCCPacketManager.sendCloudEffect(entityId, HMCCPacketManager.getViewers(user.getEntity().getLocation()));
+                HMCCPacketManager.spawnCloudAndHandleEffect(entityId, user.getEntity().getLocation(), UUID.randomUUID(), HMCCPacketManager.getViewers(user.getEntity().getLocation()));
                 this.particleCloud.add(entityId);
             }
             // Copied code from updating the backpack

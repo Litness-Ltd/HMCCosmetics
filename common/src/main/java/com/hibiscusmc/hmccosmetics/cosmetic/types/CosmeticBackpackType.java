@@ -62,9 +62,7 @@ public class CosmeticBackpackType extends Cosmetic {
         entityManager.teleport(loc);
         entityManager.setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
-        HMCCPacketManager.sendEntitySpawnPacket(entityLocation, firstArmorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
-        HMCCPacketManager.sendArmorstandMetadata(firstArmorStandId, outsideViewers);
-
+        HMCCPacketManager.spawnInvisibleArmorstand(firstArmorStandId, entityLocation, UUID.randomUUID(), outsideViewers);
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
             if (scaleAttribute != null) {
