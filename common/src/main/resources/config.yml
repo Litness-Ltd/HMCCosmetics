@@ -27,8 +27,8 @@ cosmetic-settings:
   # This determines what to process what areas to process placeholders when displaying the item to the user.
   # This can be heavy on servers with a lot of players, so if experiencing lag issues relating to setting display/lores of items, disable this.
   item-processing:
-    display-name: true
-    lore: true
+    display-name: false
+    lore: false
 
   # This is a list of worlds that cosmetics are hidden in. When a player enters one of these worlds, their cosmetics will be hidden.
   disabled-worlds:
