@@ -191,6 +191,7 @@ public class CosmeticPacketInterface implements PacketInterface {
 
     @Override
     public @NotNull PacketAction readPlayerAction(@NotNull Player player, @NotNull PlayerActionWrapper wrapper) {
+        if (!Settings.isPreventOffhandSwapping()) return PacketAction.NOTHING;
         String actionType = wrapper.getActionType();
         MessagesUtil.sendDebugMessages("EntityStatus Initial " + player.getEntityId() + " - " + actionType);
         // If it's not SWAP_ITEM_WITH_OFFHAND, ignore

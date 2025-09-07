@@ -47,6 +47,7 @@ public class Settings {
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
     private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
+    private static final String COSMETIC_OFFHAND_PREVENT_SWAPPING = "offhand-prevent-swapping";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
     private static final String MENU_CLICK_COOLDOWN_PATH = "click-cooldown";
     private static final String MENU_CLICK_COOLDOWN_TIME_PATH = "time";
@@ -100,6 +101,8 @@ public class Settings {
     private static final HashMap<EquipmentSlot, SlotOptionConfig> slotOptions = new HashMap<>();
     @Getter
     private static boolean destroyLooseCosmetics;
+    @Getter
+    private static boolean preventOffhandSwapping;
     @Getter
     private static boolean backpackForceRidingEnabled;
     @Getter
@@ -192,6 +195,7 @@ public class Settings {
         forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
         backpackForceRidingEnabled = cosmeticSettings.node(COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH).getBoolean(false);
+        preventOffhandSwapping = cosmeticSettings.node(COSMETIC_OFFHAND_PREVENT_SWAPPING).getBoolean(false);
 
         cosmeticSettings.node(SLOT_OPTIONS_PATH).childrenMap().forEach((key, value) -> {
             EquipmentSlot slot = convertConfigToEquipment(key.toString().toLowerCase());

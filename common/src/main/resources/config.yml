@@ -30,6 +30,9 @@ cosmetic-settings:
     display-name: false
     lore: false
 
+  # This prevents the offhand from being swapped with the mainhand. Only affects if a user has a cosmetic in their offhand
+  offhand-prevent-swapping: false
+
   # This is a list of worlds that cosmetics are hidden in. When a player enters one of these worlds, their cosmetics will be hidden.
   disabled-worlds:
     - "disabledworld"
