@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -83,6 +82,16 @@ public class CosmeticBackpackType extends Cosmetic {
             List<Player> owner = List.of(user.getPlayer());
 
             ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
+            /*
+            // Was playing around with an alternative way to handle the backpacks with it all being one long passenger list,
+            // however, that does not work, it's just a really up there backpack
+            areaCloud.add(user.getUserBackpackManager().getFirstArmorStandId());
+            int[] passengers = areaCloud
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+            PacketManager.sendRidingPacket(entity.getEntityId(), passengers, owner);
+            */
             for (int i = 0; i < particleCloud.size(); i++) {
                 if (i == 0) {
                     HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
