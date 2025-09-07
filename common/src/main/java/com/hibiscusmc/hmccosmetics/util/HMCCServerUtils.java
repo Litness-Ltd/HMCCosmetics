@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.util;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.owen1212055.particlehelper.api.particle.MultiParticle;
 import com.owen1212055.particlehelper.api.particle.Particle;
 import com.owen1212055.particlehelper.api.particle.types.*;
@@ -9,6 +10,8 @@ import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
@@ -156,5 +159,9 @@ public class HMCCServerUtils {
             return nextYaw;
         }
         return nextYaw;
+    }
+
+    public static NamespacedKey getCosmemeticMobKey() {
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob");
     }
 }
