@@ -62,7 +62,12 @@ public class CosmeticBackpackType extends Cosmetic {
         entityManager.teleport(loc);
         entityManager.setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
-        HMCCPacketManager.spawnInvisibleArmorstand(firstArmorStandId, entityLocation, UUID.randomUUID(), outsideViewers);
+        // These are heavier-than-average operations. Do not run if there is no one to send them to!
+        if (!outsideViewers.isEmpty()){
+            HMCCPacketManager.spawnInvisibleArmorstand(firstArmorStandId, entityLocation, UUID.randomUUID(), outsideViewers);
+            PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
+        }
+
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
             if (scaleAttribute != null) {
@@ -70,7 +75,6 @@ public class CosmeticBackpackType extends Cosmetic {
             }
         }
 
-        PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
         if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, entityManager.getViewers());
         else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, outsideViewers);
