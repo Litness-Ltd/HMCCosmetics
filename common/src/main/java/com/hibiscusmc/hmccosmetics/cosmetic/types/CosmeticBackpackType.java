@@ -78,20 +78,10 @@ public class CosmeticBackpackType extends Cosmetic {
         if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, entityManager.getViewers());
         else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, outsideViewers);
 
-        if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
+        if (isFirstPersonCompadible() && !user.isInWardrobe() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
 
             ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
-            /*
-            // Was playing around with an alternative way to handle the backpacks with it all being one long passenger list,
-            // however, that does not work, it's just a really up there backpack
-            areaCloud.add(user.getUserBackpackManager().getFirstArmorStandId());
-            int[] passengers = areaCloud
-                    .stream()
-                    .mapToInt(Integer::intValue)
-                    .toArray();
-            PacketManager.sendRidingPacket(entity.getEntityId(), passengers, owner);
-            */
             for (int i = 0; i < particleCloud.size(); i++) {
                 if (i == 0) {
                     HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
@@ -99,7 +89,7 @@ public class CosmeticBackpackType extends Cosmetic {
                     HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
                 }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), firstArmorStandId, owner);
+            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), firstArmorStandId, owner);
             if (!user.isHidden()) {
                 //if (loc.getPitch() < -70) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, new ItemStack(Material.AIR), owner);
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);

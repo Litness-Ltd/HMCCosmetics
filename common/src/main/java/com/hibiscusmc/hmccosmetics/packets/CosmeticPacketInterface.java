@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -124,28 +125,37 @@ public class CosmeticPacketInterface implements PacketInterface {
 
     @Override
     public @NotNull PacketAction writePassengerContent(@NotNull Player player, @NotNull PassengerWrapper wrapper) {
-        //return PacketAction.NOTHING;
         // TODO: Figure out what to do with this, because with it in, it ruins backpacks (they keep getting thrown to random locations).
-        // Appears to work fine atm?
         CosmeticUser viewerUser = CosmeticUsers.getUser(player);
         if (viewerUser == null || viewerUser.isInWardrobe()) return PacketAction.NOTHING;
 
         int ownerId = wrapper.getOwner();
         List<Integer> originalPassengers = wrapper.getPassengers();
 
-        MessagesUtil.sendDebugMessages("Mount Packet Read - EntityID: " + ownerId);
+        //MessagesUtil.sendDebugMessages("Mount Packet Read - EntityID: " + ownerId);
 
         Optional<CosmeticUser> optionalCosmeticUser = CosmeticUsers.values().stream().filter(user -> user.getPlayer() != null).filter(user -> ownerId == user.getPlayer().getEntityId()).findFirst();
         if (optionalCosmeticUser.isEmpty()) return PacketAction.NOTHING;
         CosmeticUser user = optionalCosmeticUser.get();
-        MessagesUtil.sendDebugMessages("Mount Packet Sent - " + user.getUniqueId());
+        //MessagesUtil.sendDebugMessages("Mount Packet Sent - " + user.getUniqueId());
 
-        if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return PacketAction.NOTHING;
+        Cosmetic backpackCosmetic = user.getCosmetic(CosmeticSlot.BACKPACK);
+        if (backpackCosmetic == null) return PacketAction.NOTHING;
+        if (!(backpackCosmetic instanceof CosmeticBackpackType cosmeticBackpackType)) return PacketAction.NOTHING;
+        if (user.getUniqueId().equals(viewerUser.getUniqueId())) {
+            if (cosmeticBackpackType.isFirstPersonCompadible()) return PacketAction.NOTHING;
+        }
+
         if (user.getUserBackpackManager() == null) return PacketAction.NOTHING;
 
         List<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getEntityManager().getIds());
-        passengers.addAll(originalPassengers);
+        // Prevent duplicates
+        for (int i : originalPassengers) {
+            if (passengers.contains(i)) continue;
+            passengers.add(i);
+        }
         wrapper.setPassengers(passengers);
+        MessagesUtil.sendDebugMessages("Passenger List: " + passengers + " (origin/destination) " + user.getUniqueId().equals(viewerUser.getUniqueId()));
         return PacketAction.CHANGED;
     }
 
