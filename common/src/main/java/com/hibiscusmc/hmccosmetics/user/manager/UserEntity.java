@@ -13,6 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,36 +42,41 @@ public class UserEntity {
 
     public List<Player> refreshViewers(Location location) {
         if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
-        ArrayList<Player> newPlayers = new ArrayList<>();
-        ArrayList<Player> removePlayers = new ArrayList<>();
-        List<Player> players = HMCCPacketManager.getViewers(location);
+
         Entity ownerPlayer = Bukkit.getEntity(owner);
         if (ownerPlayer == null) {
             MessagesUtil.sendDebugMessages("Owner is null (refreshViewers), returning empty list");
             return List.of();
         }
 
+        final HashSet<Player> players = new HashSet<>(HMCCPacketManager.getViewers(location));
+        final ArrayList<Player> newPlayers = new ArrayList<>();
+        final ArrayList<Player> removePlayers = new ArrayList<>();
+
+        // Go through all nearby players, check if they are new to the viewers list.
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user != null && owner != user.getUniqueId() && user.isInWardrobe() && !player.canSee(ownerPlayer)) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
                 removePlayers.add(player);
-                HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(player));
                 continue;
             }
             if (!viewers.contains(player)) {
                 viewers.add(player);
                 newPlayers.add(player);
-                continue;
-            }
-            // bad loopdy loops
-            for (Player viewerPlayer : viewers) {
-                if (!players.contains(viewerPlayer)) {
-                    removePlayers.add(viewerPlayer);
-                    HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(viewerPlayer));
-                }
             }
         }
-        viewers.removeAll(removePlayers);
+        // Basically, if they are not nearby, they are still in the viewers and we need to kick em to the curb
+        for (Player viewerPlayer : viewers) {
+            if (!players.contains(viewerPlayer)) {
+                removePlayers.add(viewerPlayer);
+            }
+        }
+
+        // If there are players for removal, send the packets to them
+        if (!removePlayers.isEmpty()) {
+            HMCCPacketManager.sendEntityDestroyPacket(ids, removePlayers);
+            viewers.removeAll(removePlayers);
+        }
         setViewerLastUpdate(System.currentTimeMillis());
         return newPlayers;
     }
