@@ -132,12 +132,9 @@ public class CosmeticPacketInterface implements PacketInterface {
         int ownerId = wrapper.getOwner();
         List<Integer> originalPassengers = wrapper.getPassengers();
 
-        //MessagesUtil.sendDebugMessages("Mount Packet Read - EntityID: " + ownerId);
-
         Optional<CosmeticUser> optionalCosmeticUser = CosmeticUsers.values().stream().filter(user -> user.getPlayer() != null).filter(user -> ownerId == user.getPlayer().getEntityId()).findFirst();
         if (optionalCosmeticUser.isEmpty()) return PacketAction.NOTHING;
         CosmeticUser user = optionalCosmeticUser.get();
-        //MessagesUtil.sendDebugMessages("Mount Packet Sent - " + user.getUniqueId());
 
         Cosmetic backpackCosmetic = user.getCosmetic(CosmeticSlot.BACKPACK);
         if (backpackCosmetic == null) return PacketAction.NOTHING;
@@ -155,7 +152,6 @@ public class CosmeticPacketInterface implements PacketInterface {
             passengers.add(i);
         }
         wrapper.setPassengers(passengers);
-        MessagesUtil.sendDebugMessages("Passenger List: " + passengers + " (origin/destination) " + user.getUniqueId().equals(viewerUser.getUniqueId()));
         return PacketAction.CHANGED;
     }
 
