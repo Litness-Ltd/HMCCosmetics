@@ -130,7 +130,6 @@ public class CosmeticPacketInterface implements PacketInterface {
         if (viewerUser == null || viewerUser.isInWardrobe()) return PacketAction.NOTHING;
 
         int ownerId = wrapper.getOwner();
-        List<Integer> originalPassengers = wrapper.getPassengers();
 
         Optional<CosmeticUser> optionalCosmeticUser = CosmeticUsers.values().stream().filter(user -> user.getPlayer() != null).filter(user -> ownerId == user.getPlayer().getEntityId()).findFirst();
         if (optionalCosmeticUser.isEmpty()) return PacketAction.NOTHING;
@@ -145,12 +144,9 @@ public class CosmeticPacketInterface implements PacketInterface {
 
         if (user.getUserBackpackManager() == null) return PacketAction.NOTHING;
 
+        List<Integer> originalPassengers = wrapper.getPassengers();
         List<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getEntityManager().getIds());
-        // Prevent duplicates
-        for (int i : originalPassengers) {
-            if (passengers.contains(i)) continue;
-            passengers.add(i);
-        }
+        passengers.addAll(originalPassengers);
         wrapper.setPassengers(passengers);
         return PacketAction.CHANGED;
     }
