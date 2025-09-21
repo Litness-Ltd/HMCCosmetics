@@ -334,7 +334,11 @@ public class CosmeticCommand implements CommandExecutor {
                     }
                     user.addCosmetic(cosmetic, color); // #FFFFFF
                 } else {
-                    DyeMenuProvider.openMenu(player, user, cosmetic);
+                    if (DyeMenuProvider.hasMenuProvider()) {
+                        DyeMenuProvider.openMenu(player, user, cosmetic);
+                    } else {
+                        if (!silent) MessagesUtil.sendMessage(player, "invalid-color");
+                    }
                 }
             }
             case ("setwardrobesetting") -> {
