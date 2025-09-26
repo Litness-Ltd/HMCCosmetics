@@ -60,11 +60,6 @@ public class SQLiteData extends SQLData {
     }
 
     private void openConnection() throws SQLException {
-        // Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-        // ...
-        // });
-        // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
-
         if (connection != null && !connection.isClosed()) return;
 
         // Close Connection if still active
@@ -84,9 +79,12 @@ public class SQLiteData extends SQLData {
     @Override
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
-        if (!isConnectionOpen()) MessagesUtil.sendDebugMessages("Connection is not open");
 
         try {
+            if (!isConnectionOpen()) {
+                MessagesUtil.sendDebugMessages("Connection is not open");
+                openConnection();
+            }
             ps = connection.prepareStatement(query);
         } catch (SQLException e) {
             e.printStackTrace();

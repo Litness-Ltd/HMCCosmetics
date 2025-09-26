@@ -38,14 +38,14 @@ public class MySQLData extends SQLData {
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
         try {
             openConnection();
-            if (connection == null) throw new NullPointerException("Connection is null");
+            if (connection == null) throw new IllegalStateException("Connection is null");
             try (PreparedStatement preparedStatement =  connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(36) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
                     ");")) {
                 preparedStatement.execute();
             }
-        } catch (SQLException | NullPointerException e) {
+        } catch (SQLException | IllegalStateException e) {
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
             plugin.getLogger().severe("MySQL DATABASE CAN NOT BE REACHED.");
@@ -72,16 +72,10 @@ public class MySQLData extends SQLData {
     }
 
     private void openConnection() throws SQLException {
-        // Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-        // ...
-        // });
-        // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
-
         // Connection isn't null AND Connection isn't closed :: return
         try {
-            if (isConnectionOpen()) {
-                return;
-            } else if (connection != null) close(); // Close connection if still active
+            if (isConnectionOpen()) return;
+            if (connection != null) close(); // Close connection if still active
         } catch (RuntimeException e) {
             e.printStackTrace(); // If isConnectionOpen() throws error
         }
@@ -90,17 +84,15 @@ public class MySQLData extends SQLData {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public void close() {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
-                if (connection == null) throw new NullPointerException("Connection is null");
+                if (connection == null) throw new IllegalStateException("Connection is null");
                 connection.close();
             } catch (SQLException | NullPointerException e) {
                 System.out.println(e.getMessage());
@@ -111,13 +103,12 @@ public class MySQLData extends SQLData {
     @NotNull
     private Properties setupProperties() {
         Properties props = new Properties();
-        props.put("user", user);
-        props.put("password", password);
-        props.put("autoReconnect", "true");
+        props.setProperty("user", user);
+        props.setProperty("password", password);
         return props;
     }
 
-    private boolean isConnectionOpen() throws RuntimeException {
+    private boolean isConnectionOpen() {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException e) {
@@ -139,9 +130,9 @@ public class MySQLData extends SQLData {
         }
 
         try {
-            if (connection == null) throw new NullPointerException("Connection is null");
+            if (connection == null) throw new IllegalStateException("Connection is null");
             ps = connection.prepareStatement(query);
-        } catch (SQLException | NullPointerException e) {
+        } catch (SQLException | IllegalStateException e) {
             e.printStackTrace();
         }
 
