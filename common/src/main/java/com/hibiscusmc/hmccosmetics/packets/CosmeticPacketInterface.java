@@ -126,6 +126,8 @@ public class CosmeticPacketInterface implements PacketInterface {
     @Override
     public @NotNull PacketAction writePassengerContent(@NotNull Player player, @NotNull PassengerWrapper wrapper) {
         // TODO: Figure out what to do with this, because with it in, it ruins backpacks (they keep getting thrown to random locations).
+        return PacketAction.NOTHING;
+        /*
         CosmeticUser viewerUser = CosmeticUsers.getUser(player);
         if (viewerUser == null || viewerUser.isInWardrobe()) return PacketAction.NOTHING;
 
@@ -149,6 +151,7 @@ public class CosmeticPacketInterface implements PacketInterface {
         passengers.addAll(originalPassengers);
         wrapper.setPassengers(passengers);
         return PacketAction.CHANGED;
+         */
     }
 
     @Override
