@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +69,11 @@ public class PlayerMovementListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onWorldChange(final PlayerChangedWorldEvent ev) {
         this.locations.remove(ev.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(final PlayerQuitEvent ev) {
+        locations.remove(ev.getPlayer().getUniqueId());
     }
 
     record SmallLocation(
