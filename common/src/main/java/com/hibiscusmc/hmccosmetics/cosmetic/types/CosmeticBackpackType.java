@@ -52,6 +52,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         if(backpackManager == null) return;
 
         UserEntity entityManager = backpackManager.getEntityManager();
+        if(entityManager == null) return;
+
         int firstArmorStandId = backpackManager.getFirstArmorStandId();
 
         List<Player> newViewers = entityManager.refreshViewers(loc);
@@ -104,6 +106,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         Location loc = entityLocation.clone().add(0, 2, 0);
 
         UserBackpackManager backpackManager = user.getUserBackpackManager();
+        if(backpackManager == null) return;
+
         UserEntity entityManager = backpackManager.getEntityManager();
 
         entityManager.teleport(loc);
