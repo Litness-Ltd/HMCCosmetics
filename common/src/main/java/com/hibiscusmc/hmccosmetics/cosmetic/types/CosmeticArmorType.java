@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
@@ -15,8 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class CosmeticArmorType extends Cosmetic {
-
+public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavior {
     private final EquipmentSlot equipSlot;
 
     public CosmeticArmorType(String id, ConfigurationNode config) {
@@ -31,7 +31,7 @@ public class CosmeticArmorType extends Cosmetic {
     }
 
     @Override
-    protected void doUpdate(@NotNull CosmeticUser user) {
+    public void dispatchUpdate(CosmeticUser user) {
         if (user.isInWardrobe()) return;
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         if (entity == null) return;
