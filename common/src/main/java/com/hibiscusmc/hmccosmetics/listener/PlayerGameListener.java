@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class PlayerGameListener implements Listener {
-
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerClick(@NotNull InventoryClickEvent event) {
         // || !event.getClickedInventory().getType().equals(InventoryType.PLAYER)
@@ -157,15 +156,6 @@ public class PlayerGameListener implements Listener {
             }
             if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe(false);
         }
-    }
-
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        CosmeticUser user = CosmeticUsers.getUser(player);
-        if (user == null) return;
-        user.updateCosmetic(CosmeticSlot.BACKPACK);
-        user.updateCosmetic(CosmeticSlot.BALLOON);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

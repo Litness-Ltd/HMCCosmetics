@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -12,10 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class UserEntity {
 
@@ -41,7 +39,10 @@ public class UserEntity {
     }
 
     public List<Player> refreshViewers(Location location) {
-        if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
+        //Prevents mass refreshes
+        if(System.currentTimeMillis() - viewerLastUpdate <= 3000) {
+            return List.of();
+        }
 
         Entity ownerPlayer = Bukkit.getEntity(owner);
         if (ownerPlayer == null) {
@@ -49,36 +50,55 @@ public class UserEntity {
             return List.of();
         }
 
-        final HashSet<Player> players = new HashSet<>(HMCCPacketManager.getViewers(location));
-        final ArrayList<Player> newPlayers = new ArrayList<>();
-        final ArrayList<Player> removePlayers = new ArrayList<>();
+        final List<Player> players = HMCCosmeticsPlugin.getInstance()
+            .getUserSearchManager()
+            .getPlayersInRange(location, Settings.getViewDistance());
+
+        final ArrayList<UUID> newPlayerIds = new ArrayList<>();
+        final ArrayList<UUID> removePlayerIds = new ArrayList<>();
 
         // Go through all nearby players, check if they are new to the viewers list.
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);
-            if (user != null && owner != user.getUniqueId() && user.isInWardrobe() && !player.canSee(ownerPlayer)) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
-                removePlayers.add(player);
+            if(
+                user != null
+                && owner != user.getUniqueId()
+                && user.isInWardrobe()
+                // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
+                && !player.canSee(ownerPlayer)
+            ) {
+                removePlayerIds.add(player.getUniqueId());
                 continue;
             }
+
             if (!viewers.contains(player)) {
                 viewers.add(player);
-                newPlayers.add(player);
+                newPlayerIds.add(player.getUniqueId());
             }
         }
         // Basically, if they are not nearby, they are still in the viewers and we need to kick em to the curb
         for (Player viewerPlayer : viewers) {
             if (!players.contains(viewerPlayer)) {
-                removePlayers.add(viewerPlayer);
+                removePlayerIds.add(viewerPlayer.getUniqueId());
             }
         }
 
         // If there are players for removal, send the packets to them
-        if (!removePlayers.isEmpty()) {
+        if (!removePlayerIds.isEmpty()) {
+            final List<Player> removePlayers = removePlayerIds.stream()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .toList();
+
             HMCCPacketManager.sendEntityDestroyPacket(ids, removePlayers);
             viewers.removeAll(removePlayers);
         }
-        setViewerLastUpdate(System.currentTimeMillis());
-        return newPlayers;
+
+        this.setViewerLastUpdate(System.currentTimeMillis());
+        return newPlayerIds.stream()
+            .map(Bukkit::getPlayer)
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     public void teleport(Location location) {

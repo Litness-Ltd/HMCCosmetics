@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.AccessLevel;
@@ -104,16 +105,21 @@ public abstract class Cosmetic {
      * Dispatched when an update is requested upon the cosmetic.
      * @param user the user to preform the update against
      */
-    public final void update(CosmeticUser user) {
-        this.doUpdate(user);
+    @Deprecated(since = "2.8.2")
+    public void update(CosmeticUser user) {
+        if(this instanceof CosmeticUpdateBehavior behavior) {
+            behavior.dispatchUpdate(user);
+        }
     }
 
     /**
      * Action preformed on the update.
      * @param user the user to preform the update against
      */
+    @Deprecated(since = "2.8.2")
     protected void doUpdate(final CosmeticUser user) {
-        // NO-OP.
+        // #update should be the preferred way of interacting with this api now.
+        this.update(user);
     }
 
     @Nullable

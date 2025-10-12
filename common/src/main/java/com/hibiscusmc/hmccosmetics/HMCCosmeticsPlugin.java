@@ -18,15 +18,14 @@ import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
-import com.hibiscusmc.hmccosmetics.listener.PaperPlayerGameListener;
-import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
-import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
-import com.hibiscusmc.hmccosmetics.listener.ServerListener;
+import com.hibiscusmc.hmccosmetics.listener.*;
 import com.hibiscusmc.hmccosmetics.packets.CosmeticPacketInterface;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserSearchManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
+import lombok.Getter;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
@@ -51,6 +50,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     private static HMCCosmeticsPlugin instance;
     private static YamlConfigurationLoader configLoader;
 
+    @Getter
+    private UserSearchManager userSearchManager;
+
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
         new HookHMCCosmetics();
@@ -61,6 +63,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     public void onStart() {
         // Plugin startup logic
         instance = this;
+
+        // Search Service
+        this.userSearchManager = new UserSearchManager();
 
         // File setup
         saveDefaultConfig();
@@ -102,6 +107,8 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerMovementListener(), this);
+        getServer().getPluginManager().registerEvents(userSearchManager, this);
 
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
