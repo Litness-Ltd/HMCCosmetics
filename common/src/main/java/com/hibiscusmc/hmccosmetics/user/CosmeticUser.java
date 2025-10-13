@@ -301,36 +301,39 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public void updateCosmetic(@NotNull CosmeticSlot slot) {
+    public boolean updateCosmetic(@NotNull CosmeticSlot slot) {
         final Cosmetic cosmetic = playerCosmetics.get(slot);
         if(cosmetic == null) {
-            return;
+            return false;
         }
 
         if(!(cosmetic instanceof CosmeticUpdateBehavior behavior)) {
-            throw new IllegalArgumentException("attempted to update a cosmetic that does not implement CosmeticUpdateBehavior, " +
-                "please ensure this cosmetic is properly allowed to update.");
+            MessagesUtil.sendDebugMessages("Attempted to update cosmetic that does not implement CosmeticUpdateBehavior");
+            return false;
         }
 
         behavior.dispatchUpdate(this);
+        return true;
     }
 
-    public void updateMovementCosmetic(CosmeticSlot slot, final Location from, final Location to) {
+    @Override
+    public boolean updateMovementCosmetic(CosmeticSlot slot, final Location from, final Location to) {
         final Cosmetic cosmetic = playerCosmetics.get(slot);
         if(cosmetic == null) {
-            return;
+            return false;
         }
 
         if(!(cosmetic instanceof CosmeticMovementBehavior behavior)) {
-            throw new IllegalArgumentException("attempted to update a cosmetic that does not implement CosmeticUpdateBehavior, " +
-                "please ensure this cosmetic is properly allowed to update.");
+            MessagesUtil.sendDebugMessages("Attempted to update cosmetic that does not implement CosmeticMovementBehavior");
+            return false;
         }
 
         behavior.dispatchMove(this, from, to);
+        return true;
     }
 
-    public void updateCosmetic(Cosmetic cosmetic) {
-        updateCosmetic(cosmetic.getSlot());
+    public boolean updateCosmetic(final Cosmetic cosmetic) {
+        return updateCosmetic(cosmetic.getSlot());
     }
 
     public void updateCosmetic() {
