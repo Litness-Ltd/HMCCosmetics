@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 import com.google.common.collect.ImmutableCollection;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,9 @@ public interface CosmeticHolder {
 
     boolean canEquipCosmetic(@NotNull Cosmetic cosmetic, boolean ignoreWardrobe);
 
-    void updateCosmetic(@NotNull CosmeticSlot slot);
+    boolean updateCosmetic(@NotNull CosmeticSlot slot);
+
+    boolean updateMovementCosmetic(@NotNull CosmeticSlot slot, final Location from, final Location to);
 
     /**
      * Just for backwards compatibility, ensures that the given viewer and the given cosmetic holder
