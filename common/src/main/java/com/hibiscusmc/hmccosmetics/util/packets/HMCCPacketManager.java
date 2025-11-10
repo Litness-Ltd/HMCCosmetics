@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
+import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
@@ -19,7 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class HMCCPacketManager extends PacketManager {
 
@@ -203,22 +207,6 @@ public class HMCCPacketManager extends PacketManager {
     }
 
     /**
-     *
-     * @param location Location of the fake player.
-     * @param uuid UUID of the fake player. Should be random.
-     * @param entityId The entityID that the entity will take on.
-     * @param sendTo Who should it send the packet to?
-     */
-    public static void sendFakePlayerSpawnPacket(
-            final @NotNull Location location,
-            final UUID uuid,
-            final int entityId,
-            final @NotNull List<Player> sendTo
-    ) {
-        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid, sendTo);
-    }
-
-    /**
      * Creates a fake player entity.
      * @param skinnedPlayer The original player it bases itself off of.
      * @param uuid UUID of the fake entity.
@@ -243,19 +231,10 @@ public class HMCCPacketManager extends PacketManager {
             final int playerId,
             final @NotNull List<Player> sendTo
     ) {
-        /*
-        0x01 = Is on fire
-        0x02 = Is courching
-        0x04 = Unusued
-        0x08 = Sprinting
-        0x10 = Is swimming
-        0x20 = Invisibile
-        0x40 = Is Glowing
-        0x80 = Is flying with an elytra
-         https://wiki.vg/Entity_metadata#Entity
-         */
+        // https://minecraft.wiki/w/Java_Edition_protocol/Entity_metadata#Avatar
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
-        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(playerId, Map.of(17, mask), sendTo);
+        if (NMSHandlers.getVersion().isLowerOrEqual(MinecraftVersion.v1_21_8)) NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(playerId, Map.of(17, mask), sendTo);
+        else NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(playerId, Map.of(16, mask), sendTo);
     }
 
     /**
