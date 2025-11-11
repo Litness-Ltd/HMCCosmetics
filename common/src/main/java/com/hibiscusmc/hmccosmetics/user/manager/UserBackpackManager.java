@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.AttributeWrapper;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -61,7 +59,7 @@ public class UserBackpackManager {
         HMCCPacketManager.spawnInvisibleArmorstand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID(), outsideViewers);
 
         if (user.getPlayer() != null) {
-            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(AttributeWrapper.SCALE);
+            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
             if (scaleAttribute != null) {
                 HMCCPacketManager.sendEntityScalePacket(getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
             }
