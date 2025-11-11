@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEntity;
+import com.hibiscusmc.hmccosmetics.util.AttributeWrapper;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
@@ -63,7 +64,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
             PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), newViewers);
 
             if (user.getPlayer() != null) {
-                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
+                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(AttributeWrapper.SCALE);
                 if (scaleAttribute != null) {
                     HMCCPacketManager.sendEntityScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), scaleAttribute.getValue(), newViewers);
                 }
