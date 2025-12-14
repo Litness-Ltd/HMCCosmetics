@@ -107,7 +107,6 @@ allprojects {
             exclude("net.kyori") // Already have adventure API
         }
         implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-        implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.8")
     }
 
     tasks {
