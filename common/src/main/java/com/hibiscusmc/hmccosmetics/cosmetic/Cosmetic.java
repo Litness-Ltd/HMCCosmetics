@@ -102,7 +102,7 @@ public abstract class Cosmetic {
     }
 
     /**
-     * Dispatched when an update is requested upon the cosmetic.
+     * Dispatched when an update is requested upon the cosmetic. Instead, you should use {@link CosmeticUser#updateCosmetic(CosmeticSlot)})}
      * @param user the user to preform the update against
      */
     @Deprecated(since = "2.8.2")
@@ -113,7 +113,7 @@ public abstract class Cosmetic {
     }
 
     /**
-     * Action preformed on the update.
+     * Action preformed on the update. Instead, you should use {@link CosmeticUser#updateCosmetic(CosmeticSlot)})}
      * @param user the user to preform the update against
      */
     @Deprecated(since = "2.8.2")
