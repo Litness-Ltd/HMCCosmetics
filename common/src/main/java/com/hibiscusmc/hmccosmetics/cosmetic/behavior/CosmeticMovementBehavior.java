@@ -2,14 +2,15 @@ package com.hibiscusmc.hmccosmetics.cosmetic.behavior;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Updates cosmetics whenever a player moves.
  */
 public interface CosmeticMovementBehavior {
     void dispatchMove(
-        final CosmeticUser user,
-        final Location from,
-        final Location to
+        @NotNull final CosmeticUser user,
+        @NotNull final Location from,
+        @NotNull final Location to
     );
 }

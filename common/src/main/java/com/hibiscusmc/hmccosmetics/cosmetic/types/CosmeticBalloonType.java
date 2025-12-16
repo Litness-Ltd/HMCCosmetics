@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
     }
 
     @Override
-    public void dispatchUpdate(CosmeticUser user) {
+    public void dispatchUpdate(@NotNull CosmeticUser user) {
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         UserBalloonManager userBalloonManager = user.getBalloonManager();
 
@@ -79,7 +80,7 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
     }
 
     @Override
-    public void dispatchMove(CosmeticUser user, Location from, Location to) {
+    public void dispatchMove(@NotNull CosmeticUser user, @NotNull Location from, @NotNull Location to) {
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         UserBalloonManager userBalloonManager = user.getBalloonManager();
 

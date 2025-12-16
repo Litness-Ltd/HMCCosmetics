@@ -39,7 +39,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
     }
 
     @Override
-    public void dispatchUpdate(CosmeticUser user) {
+    public void dispatchUpdate(@NotNull CosmeticUser user) {
         Entity entity = user.getEntity();
         if(entity == null) {
             return;
@@ -95,7 +95,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
     }
 
     @Override
-    public void dispatchMove(CosmeticUser user, Location from, Location to) {
+    public void dispatchMove(@NotNull CosmeticUser user, @NotNull Location from, @NotNull Location to) {
         @SuppressWarnings("DuplicatedCode") // thanks.
         Entity entity = user.getEntity();
         if(entity == null) {
