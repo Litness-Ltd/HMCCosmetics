@@ -99,7 +99,7 @@ public class CosmeticUser implements CosmeticHolder {
                 Color color = null;
                 if (colorRGBInt != -1) color = Color.fromRGB(colorRGBInt); // -1 is defined as no color; anything else is a color
 
-                this.addPlayerCosmetic(cosmetic, color);
+                this.addCosmetic(cosmetic, color);
             }
             this.applyHiddenState(userData.getHiddenReasons());
         }
@@ -112,7 +112,7 @@ public class CosmeticUser implements CosmeticHolder {
      * This is used to help hooking plugins apply custom logic to the user.
      */
     protected boolean applyCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
-        this.addPlayerCosmetic(cosmetic, color);
+        this.addCosmetic(cosmetic, color);
         return true;
     }
 
@@ -317,7 +317,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public boolean updateMovementCosmetic(CosmeticSlot slot, final Location from, final Location to) {
+    public boolean updateMovementCosmetic(@NotNull CosmeticSlot slot, @NotNull final Location from, @NotNull final Location to) {
         final Cosmetic cosmetic = playerCosmetics.get(slot);
         if(cosmetic == null) {
             return false;
@@ -332,7 +332,7 @@ public class CosmeticUser implements CosmeticHolder {
         return true;
     }
 
-    public boolean updateCosmetic(final Cosmetic cosmetic) {
+    public boolean updateCosmetic(@NotNull final Cosmetic cosmetic) {
         return updateCosmetic(cosmetic.getSlot());
     }
 
@@ -372,7 +372,7 @@ public class CosmeticUser implements CosmeticHolder {
         }
     }
 
-    public ItemStack getUserCosmeticItem(CosmeticSlot slot) {
+    public ItemStack getUserCosmeticItem(@NotNull CosmeticSlot slot) {
         Cosmetic cosmetic = getCosmetic(slot);
         if (cosmetic == null) return new ItemStack(Material.AIR);
         return getUserCosmeticItem(cosmetic);
