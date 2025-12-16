@@ -43,7 +43,6 @@ public class Settings {
     private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
     private static final String HOOK_WG_MOVE_CHECK_PATH_LEGACY = "player_move_check";
     private static final String COSMETIC_DISABLED_WORLDS_PATH = "disabled-worlds";
-    private static final String COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH = "entity-cooldown-teleport-packet";
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
     private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
@@ -119,8 +118,6 @@ public class Settings {
     private static int viewDistance;
     @Getter
     private static int tickPeriod;
-    @Getter
-    private static int packetEntityTeleportCooldown;
     @Getter
     private static Long defaultMenuCooldown;
     @Getter
@@ -210,7 +207,6 @@ public class Settings {
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
-        packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 

@@ -47,10 +47,6 @@ cosmetic-settings:
   backpack-force-riding-packet: true
   # This prevents the backpack from being dark when the player is below a block at the expense of making the backpack bright
   backpack-prevent-darkness: true
-  # This helps reduce the amount of packets sent for packet entities, but reduces accuracy of the entity. This is in milliseconds. -1 to disable.
-  # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
-  entity-cooldown-teleport-packet: 500
-  # This forces the offhand to always show the cosmetic. False means it will only show when the slot is empty.
 
   slot-options:
     helmet:

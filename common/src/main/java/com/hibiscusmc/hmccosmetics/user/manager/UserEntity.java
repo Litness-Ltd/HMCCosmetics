@@ -40,9 +40,9 @@ public class UserEntity {
 
     public List<Player> refreshViewers(Location location) {
         //Prevents mass refreshes
-        if(System.currentTimeMillis() - viewerLastUpdate <= 3000) {
-            return List.of();
-        }
+        //if(System.currentTimeMillis() - viewerLastUpdate <= 3000) {
+        //    return List.of();
+        //}
 
         Entity ownerPlayer = Bukkit.getEntity(owner);
         if (ownerPlayer == null) {
