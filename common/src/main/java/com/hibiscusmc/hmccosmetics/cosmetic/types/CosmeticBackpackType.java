@@ -54,6 +54,9 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         UserEntity entityManager = backpackManager.getEntityManager();
         if(entityManager == null) return;
 
+        entityManager.teleport(loc);
+        entityManager.setRotation((int) loc.getYaw(), isFirstPersonCompadible());
+
         int firstArmorStandId = backpackManager.getFirstArmorStandId();
 
         List<Player> newViewers = entityManager.refreshViewers(loc);
