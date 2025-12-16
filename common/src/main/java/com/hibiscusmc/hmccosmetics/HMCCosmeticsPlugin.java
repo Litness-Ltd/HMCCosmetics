@@ -22,7 +22,7 @@ import com.hibiscusmc.hmccosmetics.listener.*;
 import com.hibiscusmc.hmccosmetics.packets.CosmeticPacketInterface;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.hibiscusmc.hmccosmetics.user.manager.UserSearchManager;
+import com.hibiscusmc.hmccosmetics.util.PlayerSearchManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import lombok.Getter;
@@ -51,7 +51,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     private static YamlConfigurationLoader configLoader;
 
     @Getter
-    private UserSearchManager userSearchManager;
+    private PlayerSearchManager playerSearchManager;
 
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
@@ -65,7 +65,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         instance = this;
 
         // Search Service
-        this.userSearchManager = new UserSearchManager();
+        this.playerSearchManager = new PlayerSearchManager(this);
 
         // File setup
         saveDefaultConfig();
@@ -108,7 +108,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerMovementListener(), this);
-        getServer().getPluginManager().registerEvents(userSearchManager, this);
+        getServer().getPluginManager().registerEvents(playerSearchManager, this);
 
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);

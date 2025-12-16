@@ -51,7 +51,7 @@ public class UserEntity {
         }
 
         final List<Player> players = HMCCosmeticsPlugin.getInstance()
-            .getUserSearchManager()
+            .getPlayerSearchManager()
             .getPlayersInRange(location, Settings.getViewDistance());
 
         final ArrayList<UUID> newPlayerIds = new ArrayList<>();
