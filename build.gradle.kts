@@ -94,10 +94,12 @@ allprojects {
         compileOnly("org.projectlombok:lombok:1.18.34")
         compileOnly("me.lojosho:HibiscusCommons:0.8.1-d9fbae1d")
 
-        // Handled by Spigot Library Loader
+        // Handled by Spigot Library Loader ~ Deprecated as of Dec 16, 2025
+        /*
         compileOnly("net.kyori:adventure-api:4.24.0")
         compileOnly("net.kyori:adventure-text-minimessage:4.24.0")
         compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
+         */
 
         annotationProcessor("org.projectlombok:lombok:1.18.36")
         testCompileOnly("org.projectlombok:lombok:1.18.36")

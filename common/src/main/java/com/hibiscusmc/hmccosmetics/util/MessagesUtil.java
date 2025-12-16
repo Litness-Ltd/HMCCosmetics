@@ -7,7 +7,6 @@ import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
@@ -43,41 +42,35 @@ public class MessagesUtil {
     public static void sendMessage(Player player, String key) {
         Component finalMessage = processString(player, key);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-        target.sendMessage(finalMessage);
+        player.sendMessage(finalMessage);
     }
 
     public static void sendMessage(CommandSender sender, String key) {
         Component finalMessage = processString(null, key);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
 
-        target.sendMessage(finalMessage);
+        sender.sendMessage(finalMessage);
     }
 
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
         Component finalMessage = processString(player, key, placeholder);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-        target.sendMessage(finalMessage);
+        player.sendMessage(finalMessage);
     }
 
     public static void sendMessageNoKey(Player player, String message) {
         Component finalMessage = processStringNoKey(player, message);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-        target.sendMessage(finalMessage);
+        player.sendMessage(finalMessage);
     }
 
     public static void sendActionBar(Player player, String key) {
         Component finalMessage = processString(player, key);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-
-        target.sendActionBar(finalMessage);
+        player.sendActionBar(finalMessage);
     }
 
     public static void sendTitle(Player player, String message) {
@@ -85,12 +78,10 @@ public class MessagesUtil {
     }
 
     public static void sendTitle(Player player, String message, int fadein, int stay, int fadeout) {
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-
         Title.Times times = Title.Times.times(Duration.ofMillis(fadein), Duration.ofMillis(stay), Duration.ofMillis(fadeout));
         Title title = Title.title(processStringNoKey(player, message), Component.empty(), times);
 
-        target.showTitle(title);
+        player.showTitle(title);
     }
 
     public static Component processString(Player player, String key) {

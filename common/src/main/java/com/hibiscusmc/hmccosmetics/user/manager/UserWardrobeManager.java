@@ -20,7 +20,6 @@ import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -184,9 +183,9 @@ public class UserWardrobeManager {
                 Component message = MessagesUtil.processStringNoKey(player, WardrobeSettings.getBossbarMessage());
 
                 bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
-                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+                //Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-                target.showBossBar(bossBar);
+                player.showBossBar(bossBar);
             }
 
             if (WardrobeSettings.isEnterOpenMenu()) {
@@ -288,9 +287,8 @@ public class UserWardrobeManager {
             HMCCPacketManager.equipmentSlotUpdate(player.getEntityId(), items, viewer);
 
             if (WardrobeSettings.isEnabledBossbar()) {
-                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-
-                target.hideBossBar(bossBar);
+                //Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+                player.hideBossBar(bossBar);
             }
 
             user.updateCosmetic();
