@@ -106,8 +106,8 @@ menu-settings:
     first-row-shift: "<shift:-153>" # Nexo: "<shift:-153>"
     sequent-row-shift: " <shift:-153>" # Nexo: " <shift:-153>" (Space is important here!)
     individual-column-shift: "<shift:-3>" # Nexo: "<shift:-3>"
-    background: "<glyph:shade_row_<row>:colorable> " # Nexo: "<glyph:shade_row_<row>:colorable> 
-    clear-background: "<glyph:clear_row_<row>:colorable> " # Nexo: "<glyph:clear_row_<row>:colorable> "
+    background: "<glyph:hmcc_shade_row_<row>:colorable> " # Nexo: "<glyph:shade_row_<row>:colorable> 
+    clear-background: "<glyph:hmcc_clear_row_<row>:colorable> " # Nexo: "<glyph:clear_row_<row>:colorable> "
     #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
     equipped-cosmetic-color: "<yellow>"
     equipable-cosmetic-color: "<green>"
@@ -117,9 +117,9 @@ menu-settings:
     equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
     unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
 dye-menu:
-  # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
-  # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
-  # If you use Nexo, set this to "<white><shift:-8><glyph:dye_menu>"
+  # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_hmcc_dye_menu:"
+  # If you use Oraxen, set this to "<white><s:-8><g:hmcc_dye_menu>"
+  # If you use Nexo, set this to "<white><shift:-8><glyph:hmcc_dye_menu>"
   title: "<white>"
   input-slot: 10
   output-slot: 16
