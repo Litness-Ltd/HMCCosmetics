@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
             PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), newViewers);
 
             if (user.getPlayer() != null) {
-                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
+                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
                 if (scaleAttribute != null) {
                     HMCCPacketManager.sendEntityScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), scaleAttribute.getValue(), newViewers);
                 }

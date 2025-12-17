@@ -142,7 +142,7 @@ public class UserWardrobeManager {
                 HMCCPacketManager.sendPlayerOverlayPacket(NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
                 NMSHandlers.getHandler().getPacketHandler().sendScoreboardHideNamePacket(player, npcName);
-                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
+                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
                 if (scaleAttribute != null) {
                     HMCCPacketManager.sendEntityScalePacket(NPC_ID, scaleAttribute.getValue(), viewer);
                 }

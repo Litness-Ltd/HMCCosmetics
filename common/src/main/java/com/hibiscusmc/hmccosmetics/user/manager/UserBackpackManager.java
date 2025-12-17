@@ -59,7 +59,7 @@ public class UserBackpackManager {
         HMCCPacketManager.spawnInvisibleArmorstand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID(), outsideViewers);
 
         if (user.getPlayer() != null) {
-            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
+            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
             if (scaleAttribute != null) {
                 HMCCPacketManager.sendEntityScalePacket(getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
             }
