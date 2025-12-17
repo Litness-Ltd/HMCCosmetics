@@ -123,8 +123,6 @@ public class Settings {
     @Getter
     private static boolean menuClickCooldown;
     @Getter
-    private static double emoteDistance;
-    @Getter
     private static Vector balloonOffset;
     @Getter
     private static String cosmeticEquipClickType;
