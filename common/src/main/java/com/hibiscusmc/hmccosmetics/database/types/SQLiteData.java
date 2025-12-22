@@ -32,8 +32,6 @@ public class SQLiteData extends SQLData {
         }
 
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-
             openConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(36) PRIMARY KEY, " +
@@ -69,9 +67,7 @@ public class SQLiteData extends SQLData {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
