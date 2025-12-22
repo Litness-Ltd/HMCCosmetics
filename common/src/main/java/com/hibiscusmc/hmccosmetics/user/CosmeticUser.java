@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;

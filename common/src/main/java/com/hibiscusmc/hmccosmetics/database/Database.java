@@ -1,6 +1,6 @@
 package com.hibiscusmc.hmccosmetics.database;
 
-import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.types.Data;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.database.types.NoneData;

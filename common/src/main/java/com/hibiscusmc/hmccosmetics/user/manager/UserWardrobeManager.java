@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.Wardrobe;
-import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.section.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

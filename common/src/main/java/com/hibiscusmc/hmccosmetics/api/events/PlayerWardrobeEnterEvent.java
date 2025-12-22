@@ -1,6 +1,6 @@
 package com.hibiscusmc.hmccosmetics.api.events;
 
-import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

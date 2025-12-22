@@ -5,7 +5,7 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerPreLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerPreUnloadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerUnloadEvent;
-import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;

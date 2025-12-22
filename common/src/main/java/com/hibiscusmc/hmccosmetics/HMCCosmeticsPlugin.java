@@ -3,7 +3,7 @@ package com.hibiscusmc.hmccosmetics;
 import com.hibiscusmc.hmccosmetics.api.events.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
-import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;

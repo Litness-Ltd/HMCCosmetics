@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.config;
+package com.hibiscusmc.hmccosmetics.config.section;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import lombok.Getter;

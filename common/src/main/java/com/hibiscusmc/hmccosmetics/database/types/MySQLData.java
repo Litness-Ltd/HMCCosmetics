@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;

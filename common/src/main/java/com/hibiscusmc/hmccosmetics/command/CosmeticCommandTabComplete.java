@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.command;
 
 import com.hibiscusmc.hmccolor.HMCColorContextKt;
-import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;

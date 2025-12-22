@@ -1,6 +1,8 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.section.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;

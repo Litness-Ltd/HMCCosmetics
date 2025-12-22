@@ -1,12 +1,13 @@
 package com.hibiscusmc.hmccosmetics.api.events;
 
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player leaves their {@link com.hibiscusmc.hmccosmetics.config.Wardrobe}.
+ * Called when a player leaves their {@link Wardrobe}.
  */
 public class PlayerWardrobeLeaveEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();

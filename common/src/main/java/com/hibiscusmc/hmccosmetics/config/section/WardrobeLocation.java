@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.config;
+package com.hibiscusmc.hmccosmetics.config.section;
 
 import lombok.Getter;
 import lombok.Setter;
