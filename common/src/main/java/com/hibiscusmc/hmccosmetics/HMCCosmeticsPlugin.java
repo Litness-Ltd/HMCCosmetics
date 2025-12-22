@@ -22,7 +22,7 @@ import com.hibiscusmc.hmccosmetics.listener.*;
 import com.hibiscusmc.hmccosmetics.packets.CosmeticPacketInterface;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.hibiscusmc.hmccosmetics.util.PlayerSearchManager;
+import com.hibiscusmc.hmccosmetics.util.search.PlayerSearchManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import lombok.Getter;
@@ -64,9 +64,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // Plugin startup logic
         instance = this;
 
-        // Search Service
-        this.playerSearchManager = new PlayerSearchManager(this);
-
         // File setup
         saveDefaultConfig();
         if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
@@ -99,6 +96,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         setup();
         setPacketInterface(new CosmeticPacketInterface());
 
+        // Search Service
+        this.playerSearchManager = new PlayerSearchManager(Settings.getEngine(), this);
+
         // Commands
         getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
         getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
@@ -108,7 +108,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerMovementListener(), this);
-        getServer().getPluginManager().registerEvents(playerSearchManager, this);
+        getServer().getPluginManager().registerEvents(this.playerSearchManager.getEngine(), this);
 
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);

@@ -1,12 +1,12 @@
-package com.hibiscusmc.hmccosmetics.util;
+package com.hibiscusmc.hmccosmetics.util.search;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.util.Octree;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -15,21 +15,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PlayerSearchManager implements Listener {
+public class OctreePlayerSearchEngine extends PlayerSearchEngine {
+
     private final Map<UUID, Octree<Player>> worldOctrees = new HashMap<>();
     private final Map<UUID, Octree.Point3D> playerPositions = new HashMap<>();
 
-    //private static final double WORLD_HALF_SIZE = 30_000_000; // Previous built in value
-    private final double WORLD_HALF_SIZE;
+    private final int WORLD_HALF_SIZE;
 
-    public PlayerSearchManager(@NotNull HMCCosmeticsPlugin plugin) {
-        WORLD_HALF_SIZE = (double) plugin.getServer().getMaxWorldSize() / 2;
+    public OctreePlayerSearchEngine(@NotNull HMCCosmeticsPlugin instance) {
+        super(instance);
+        WORLD_HALF_SIZE = instance.getServer().getMaxWorldSize();
     }
 
     private Octree<Player> getOrCreateOctree(World world) {
         return worldOctrees.computeIfAbsent(world.getUID(), $ -> {
             Octree.BoundingBox worldBoundary = new Octree.BoundingBox(
-                new Octree.Point3D(0, 160, 0), WORLD_HALF_SIZE
+                    new Octree.Point3D(0, 160, 0), WORLD_HALF_SIZE
             );
             return new Octree<>(worldBoundary);
         });
@@ -65,6 +66,7 @@ public class PlayerSearchManager implements Listener {
         addPlayer(player);
     }
 
+    @Override
     public List<Player> getPlayersInRange(Location location, double range) {
         Octree<Player> octree = worldOctrees.get(location.getWorld().getUID());
         if (octree == null) return Collections.emptyList();
@@ -73,10 +75,11 @@ public class PlayerSearchManager implements Listener {
         Octree.BoundingBox searchArea = new Octree.BoundingBox(point, range);
 
         return octree.queryRange(searchArea)
-            .stream()
-            .filter(Objects::nonNull)
-            .toList();
+                .stream()
+                .filter(Objects::nonNull)
+                .toList();
     }
+
 
     public void clear() {
         worldOctrees.clear();
@@ -102,4 +105,5 @@ public class PlayerSearchManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         addPlayer(event.getPlayer());
     }
+
 }

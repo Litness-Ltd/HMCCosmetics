@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.search.PlayerSearchManager;
 import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -68,6 +69,7 @@ public class Settings {
     private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
     private static final String BETTER_HUD_PATH = "betterhud";
     private static final String BETTER_HUD_HIDE_IN_WARDROBE_PATH = "wardrobe-hide";
+    private static final String PLAYER_SEARCH_IMPLEMENTATION = "player-search-implmentation";
 
     @Getter
     private static String defaultMenu;
@@ -152,6 +154,8 @@ public class Settings {
     private static boolean allPlayersHidden;
     @Getter
     private static boolean wardrobeHideHud;
+    @Getter
+    private static PlayerSearchManager.SearchEngine engine;
 
 
     public static void load(ConfigurationNode source) {
@@ -204,6 +208,7 @@ public class Settings {
         });
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
+        engine = PlayerSearchManager.SearchEngine.valueOf(cosmeticSettings.node(PLAYER_SEARCH_IMPLEMENTATION).getString("BUKKIT").toUpperCase());
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);

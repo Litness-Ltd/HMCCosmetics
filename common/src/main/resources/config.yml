@@ -24,6 +24,10 @@ cosmetic-settings:
   # Ticking periods is something that ensures new players near a player get the packets to actually apply to the user.
   tick-period: 20
 
+  # The engine HMCCosmetics will use to find nearby players.
+  # Valid Options: BUKKIT, OCTREE
+  player-search-implmentation: BUKKIT
+
   # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
   unapply-on-death: false
   # Checks a player permission if they can have a cosmetic when they join the server.
