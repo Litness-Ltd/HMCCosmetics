@@ -36,7 +36,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.unapply")) completions.add("unapply");
             if (hasPermission(sender, "hmccosmetics.cmd.menu")) completions.add("menu");
             if (hasPermission(sender, "hmccosmetics.cmd.reload")) completions.add("reload");
-            if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobe");
+            if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobes");
             if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
             if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
             if (hasPermission(sender, "hmccosmetics.cmd.setwardrobesetting")) completions.add("setwardrobesetting");
@@ -80,7 +80,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("true");
                     completions.add("false");
                 }
-                case "wardrobe" -> {
+                case "wardrobes" -> {
                     for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
                         if (wardrobe.hasPermission()) {
                             if (user.getPlayer().hasPermission(wardrobe.getPermission())) completions.add(wardrobe.getId());
@@ -108,7 +108,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
-                case "menu", "wardrobe", "apply", "unapply" -> {
+                case "menu", "wardrobes", "apply", "unapply" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }

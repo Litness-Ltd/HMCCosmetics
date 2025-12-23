@@ -6,16 +6,25 @@ import com.hibiscusmc.hmccosmetics.config.section.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
+import me.lojosho.shaded.configurate.CommentedConfigurationNode;
+import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.ConfigurationNode;
+import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import net.kyori.adventure.bossbar.BossBar;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class WardrobeSettings {
 
@@ -96,7 +105,7 @@ public class WardrobeSettings {
     private static boolean preventDamage;
     @Getter
     private static GameMode exitGamemode;
-    private static HashMap<String, Wardrobe> wardrobes;
+    private static final HashMap<String, Wardrobe> wardrobes = new HashMap<>();
     @Getter
     private static String bossbarMessage;
     @Getter
@@ -163,28 +172,50 @@ public class WardrobeSettings {
         transitionStay = transitionNode.node(TRANSITION_STAY_PATH).getInt(2000);
         transitionFadeOut = transitionNode.node(TRANSITION_FADE_OUT_PATH).getInt(2000);
 
-        wardrobes = new HashMap<>();
-        for (ConfigurationNode wardrobesNode : source.node(WARDROBES_PATH).childrenMap().values()) {
-            String id = wardrobesNode.key().toString();
-            try {
-                Location npcLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(NPC_LOCATION_PATH));
-                MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
-                Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
-                MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
-                Location leaveLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH));
-                if (leaveLocation == null) leaveLocation = viewerLocation;
-                MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
-                WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
+        wardrobes.clear();
+        File wardrobeFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/wardrobes");
+        try (Stream<Path> walkStream = Files.walk(wardrobeFolder.toPath())) {
+            walkStream.filter(p -> p.toFile().isFile()).forEach(child -> {
+                if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
+                    MessagesUtil.sendDebugMessages("Scanning " + child);
+                    // Loads file
+                    YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child).build();
+                    CommentedConfigurationNode wardrobesNode;
+                    try {
+                        wardrobesNode = loader.load();
+                    } catch (ConfigurateException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (ConfigurationNode wardrobeConfig : wardrobesNode.childrenMap().values()) {
+                        registerWardrobe(wardrobeConfig, child.toFile());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-                String permission = wardrobesNode.node(PERMISSION_PATH).getString();
-                String defaultMenu = wardrobesNode.node(WARDROBE_DEFAULT_MENU).getString();
-                int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
+    private static void registerWardrobe(ConfigurationNode wardrobesNode, File file) {
+        String id = wardrobesNode.key().toString();
+        try {
+            Location npcLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(NPC_LOCATION_PATH));
+            MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
+            Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
+            MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
+            Location leaveLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH));
+            if (leaveLocation == null) leaveLocation = viewerLocation;
+            MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
+            WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
-                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, defaultMenu);
-                addWardrobe(wardrobe);
-            } catch (Exception e) {
-                MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
-            }
+            String permission = wardrobesNode.node(PERMISSION_PATH).getString();
+            String defaultMenu = wardrobesNode.node(WARDROBE_DEFAULT_MENU).getString();
+            int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
+
+            Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, defaultMenu, file);
+            addWardrobe(wardrobe);
+        } catch (Exception e) {
+            MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
         }
     }
 
@@ -215,16 +246,20 @@ public class WardrobeSettings {
     public static void setNPCLocation(Wardrobe wardrobe, Location newLocation) {
         wardrobe.getLocation().setNpcLocation(newLocation);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "pitch", newLocation.getPitch());
+        config.set(wardrobe.getId() + ".npc-location." + "world", newLocation.getWorld().getName());
+        config.set(wardrobe.getId() + ".npc-location." + "x", newLocation.getX());
+        config.set(wardrobe.getId() + ".npc-location." + "y", newLocation.getY());
+        config.set(wardrobe.getId() + ".npc-location." + "z", newLocation.getZ());
+        config.set(wardrobe.getId() + ".npc-location." + "yaw", newLocation.getYaw());
+        config.set(wardrobe.getId() + ".npc-location." + "pitch", newLocation.getPitch());
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
     }
 
     /**
@@ -234,16 +269,20 @@ public class WardrobeSettings {
     public static void setViewerLocation(Wardrobe wardrobe, Location newLocation) {
         wardrobe.getLocation().setViewerLocation(newLocation);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.pitch", newLocation.getPitch());
+        config.set(wardrobe.getId() + ".viewer-location.world", newLocation.getWorld().getName());
+        config.set(wardrobe.getId() + ".viewer-location.x", newLocation.getX());
+        config.set(wardrobe.getId() + ".viewer-location.y", newLocation.getY());
+        config.set(wardrobe.getId() + ".viewer-location.z", newLocation.getZ());
+        config.set(wardrobe.getId() + ".viewer-location.yaw", newLocation.getYaw());
+        config.set(wardrobe.getId() + ".viewer-location.pitch", newLocation.getPitch());
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
     }
 
     /**
@@ -253,45 +292,69 @@ public class WardrobeSettings {
     public static void setLeaveLocation(Wardrobe wardrobe, Location newLocation) {
         wardrobe.getLocation().setLeaveLocation(newLocation);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
+        config.set(wardrobe.getId() + ".leave-location.world", newLocation.getWorld().getName());
+        config.set(wardrobe.getId() + ".leave-location.x", newLocation.getX());
+        config.set(wardrobe.getId() + ".leave-location.y", newLocation.getY());
+        config.set(wardrobe.getId() + ".leave-location.z", newLocation.getZ());
+        config.set(wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
+        config.set(wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
     }
 
     public static void setWardrobePermission(Wardrobe wardrobe, String permission) {
         wardrobe.setPermission(permission);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".permission", permission);
+        config.set(wardrobe.getId() + ".permission", permission);
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
     }
 
     public static void setWardrobeDistance(Wardrobe wardrobe, int distance) {
         wardrobe.setDistance(distance);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".distance", distance);
+        config.set(wardrobe.getId() + ".distance", distance);
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
     }
 
     public static void setWardrobeDefaultMenu(Wardrobe wardrobe, String defaultMenu) {
         wardrobe.setDefaultMenu(defaultMenu);
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        File wardrobeFile = wardrobe.getWardrobeFile();
+        if (wardrobeFile == null) {
+            return;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".default-menu", defaultMenu);
+        config.set(wardrobe.getId() + ".default-menu", defaultMenu);
 
-        plugin.saveConfig();
+        saveConfig(config, wardrobeFile);
+    }
+
+    private static void saveConfig(YamlConfiguration config, File file) {
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

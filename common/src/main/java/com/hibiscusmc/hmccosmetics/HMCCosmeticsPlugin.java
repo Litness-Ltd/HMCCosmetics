@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics;
 import com.hibiscusmc.hmccosmetics.api.events.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
+import com.hibiscusmc.hmccosmetics.config.migration.WardrobeMigration;
 import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
@@ -74,6 +75,10 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             saveResource("menus/defaultmenu_balloons.yml", false);
             saveResource("menus/defaultmenu_hands.yml", false);
             saveResource("menus/defaultmenu_backpacks.yml", false);
+        }
+        if (!Path.of(getDataFolder().getPath() + "/wardrobes/").toFile().exists()) {
+            saveResource("wardrobes/defaultwardrobe.yml", false);
+            WardrobeMigration.migrate(this);
         }
 
         // Configuration Sync

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.io.File;
 
 public class Wardrobe {
 
@@ -20,6 +21,8 @@ public class Wardrobe {
     private WardrobeLocation location;
     @Getter @Setter @Nullable
     private String defaultMenu;
+    @Getter @Nullable
+    private File wardrobeFile;
 
     /**
      * This creates a Wardrobe object with all the information that a user will need when entering.
@@ -29,12 +32,13 @@ public class Wardrobe {
      * @param distance The distance from the wardrobe that the player can be to enter, if -1, the player can enter from any distance
      * @param defaultMenu The default menu that the player will open when entering the wardrobe.
      */
-    public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance, @Nullable String defaultMenu) {
+    public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance, @Nullable String defaultMenu, @Nullable File wardrobeFile) {
         this.id = id;
         this.location = location;
         this.distance = distance;
-        if (permission != null) this.permission = permission;
-        if (defaultMenu != null) this.defaultMenu = defaultMenu;
+        this.permission = permission;
+        this.defaultMenu = defaultMenu;
+        this.wardrobeFile = wardrobeFile;
     }
 
     /**
