@@ -74,8 +74,18 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         }
 
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
-        if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, entityManager.getViewers());
-        else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, newViewers);
+        int[] existingPassengers = entity.getPassengers().stream()
+                .mapToInt(Entity::getEntityId)
+                .toArray();
+        boolean hasExistingPassengers = existingPassengers.length > 0;
+
+        if (Settings.isBackpackForceRidingEnabled()) {
+            HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, entityManager.getViewers());
+            if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, entityManager.getViewers());
+        } else {
+            HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, newViewers);
+            if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, newViewers);
+        }
 
         if (isFirstPersonCompadible() && !user.isInWardrobe() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
@@ -88,7 +98,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
                     HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
                 }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), firstArmorStandId, owner);
+            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), firstArmorStandId, owner);
+            if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, owner);
             if (!user.isHidden()) {
                 PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
