@@ -68,6 +68,7 @@ cosmetic-settings:
     chestplate:
       add-enchantments: false
       require-empty: false
+      add-elytra-componnt: true
     leggings:
       add-enchantments: false
       require-empty: false

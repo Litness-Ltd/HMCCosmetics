@@ -1,11 +1,16 @@
 package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
@@ -15,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
 
 public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavior {
     private final EquipmentSlot equipSlot;
@@ -51,9 +58,14 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
         Player player = user.getPlayer();
         if (player == null) return null;
 
+        ItemStack physicalEquippedItem = player.getInventory().getItem(equipSlot);
         if (Settings.getSlotOption(equipSlot).isAddEnchantments()) {
-            ItemStack equippedItem = player.getInventory().getItem(equipSlot);
-            cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
+            cosmeticItem.addUnsafeEnchantments(physicalEquippedItem.getEnchantments());
+        }
+        if (Settings.getSlotOption(equipSlot).isAddElytraComponent()
+                && HibiscusCommonsPlugin.isOnPaper()
+                && HMCCInventoryUtils.isGlider(physicalEquippedItem)) {
+            cosmeticItem.editMeta(itemMeta -> itemMeta.setGlider(true));
         }
         // Basically, if force offhand is off AND there is no item in an offhand slot, then the equipment packet to add the cosmetic
         return cosmeticItem;

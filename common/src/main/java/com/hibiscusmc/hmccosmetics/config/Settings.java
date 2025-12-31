@@ -205,7 +205,8 @@ public class Settings {
             }
             boolean addEnchantments = value.node("add-enchantments").getBoolean(false);
             boolean requireEmpty = value.node("require-empty").getBoolean(false);
-            slotOptions.put(slot, new SlotOptionConfig(slot, addEnchantments, requireEmpty));
+            boolean addElytraComponent = value.node("add-elytra-componnt").getBoolean(true);
+            slotOptions.put(slot, new SlotOptionConfig(slot, addEnchantments, requireEmpty, addElytraComponent));
         });
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
@@ -270,7 +271,7 @@ public class Settings {
     }
 
     public static SlotOptionConfig getSlotOption(EquipmentSlot slot) {
-        if (!slotOptions.containsKey(slot)) slotOptions.put(slot, new SlotOptionConfig(slot, false, false));
+        if (!slotOptions.containsKey(slot)) slotOptions.put(slot, new SlotOptionConfig(slot, false, false, false));
         return slotOptions.get(slot);
     }
 
