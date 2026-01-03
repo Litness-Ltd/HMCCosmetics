@@ -18,7 +18,9 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
+import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -28,6 +30,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -151,10 +154,18 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
+                final ItemStack cosmeticItem = cosmetic.getItem();
+                Component itemName = Component.text(cosmetic.getId());
+                if (HibiscusCommonsPlugin.isOnPaper() && cosmeticItem != null) {
+                    itemName = cosmeticItem.effectiveName();
+                }
+
                 TagResolver placeholders =
                         TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
                                 TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().toString())));
+                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().toString())),
+                                TagResolver.resolver(Placeholder.component("cosmetic_item_name", itemName))
+                        );
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
@@ -198,15 +209,23 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 for (CosmeticSlot cosmeticSlot : cosmeticSlots) {
-                    if (user.getCosmetic(cosmeticSlot) == null) {
+                    final Cosmetic cosmetic = user.getCosmetic(cosmeticSlot);
+                    if (cosmetic == null) {
                         if (!silent) MessagesUtil.sendMessage(sender, "no-cosmetic-slot");
                         continue;
                     }
 
+                    final ItemStack cosmeticItem = cosmetic.getItem();
+                    Component itemName = Component.text(cosmetic.getId());
+                    if (HibiscusCommonsPlugin.isOnPaper() && cosmeticItem != null) {
+                        itemName = cosmeticItem.effectiveName();
+                    }
+
                     TagResolver placeholders =
-                            TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
+                            TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
                                     TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.toString())));
+                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.toString())),
+                                    TagResolver.resolver(Placeholder.component("cosmetic_item_name", itemName)));
 
                     if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
