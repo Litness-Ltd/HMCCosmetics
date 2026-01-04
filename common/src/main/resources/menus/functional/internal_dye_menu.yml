@@ -1,7 +1,10 @@
 # This file does not work like a regular menu file.
 # This is specifically for the internal dye menu to allow users to configure it.
 
-# The primary color item that will be dyed. If the item is not provided (commented out or deleted), it'll default to the actual cosmetic being dyed
+# The primary color item that will be dyed. If the item is not provided (commented out or deleted), it'll default to the actual cosmetic being dyed.
+# Default configs:
+# Nexo: "material: nexo:paintbrush"
+# ItemsAdder: "material: itemsadder:hmccosmetics:paintbrush"
 primary-color-item:
   material: LEATHER_HORSE_ARMOR
 secondary-color-item:
