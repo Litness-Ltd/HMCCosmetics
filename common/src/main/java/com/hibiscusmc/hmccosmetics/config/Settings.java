@@ -70,6 +70,8 @@ public class Settings {
     private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
     private static final String BETTER_HUD_PATH = "betterhud";
     private static final String BETTER_HUD_HIDE_IN_WARDROBE_PATH = "wardrobe-hide";
+    private static final String HOOK_HMCCOLOR_PATH = "hmccolor";
+    private static final String HMCCOLOR_PREFER_DYE_MENU = "prefer-hmccolor-menu";
     private static final String PLAYER_SEARCH_IMPLEMENTATION = "player-search-implmentation";
 
     @Getter
@@ -114,6 +116,8 @@ public class Settings {
     @Getter
     private static boolean backpackPreventDarkness;
     @Getter
+    private static boolean preferHMCColorDyeMenu;
+    @Getter
     private static List<String> disabledGamemodes;
     @Getter
     private static List<String> disabledWorlds;
@@ -155,6 +159,8 @@ public class Settings {
     private static boolean allPlayersHidden;
     @Getter
     private static boolean wardrobeHideHud;
+    @Getter
+    private static boolean dyeMenuEnabled;
     @Getter
     private static PlayerSearchManager.SearchEngine engine;
 
@@ -245,6 +251,7 @@ public class Settings {
         dyeMenuName = dyeMenuSettings.node(DYE_MENU_NAME).getString("Dye Menu");
         dyeMenuInputSlot = dyeMenuSettings.node(DYE_MENU_INPUT_SLOT).getInt(19);
         dyeMenuOutputSlot = dyeMenuSettings.node(DYE_MENU_OUTPUT_SLOT).getInt(25);
+        dyeMenuEnabled = dyeMenuSettings.node(ENABLED_PATH).getBoolean(true);
 
         ConfigurationNode hookSettings = source.node(HOOK_SETTING_PATH);
 
@@ -256,6 +263,9 @@ public class Settings {
 
         ConfigurationNode betterHudSettings = hookSettings.node(BETTER_HUD_PATH);
         wardrobeHideHud = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
+
+        ConfigurationNode hmccolorSettings = hookSettings.node(HOOK_HMCCOLOR_PATH);
+        preferHMCColorDyeMenu = hmccolorSettings.node(HMCCOLOR_PREFER_DYE_MENU).getBoolean(false);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);

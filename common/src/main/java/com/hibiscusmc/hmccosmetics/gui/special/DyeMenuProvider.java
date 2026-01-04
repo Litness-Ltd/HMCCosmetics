@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.gui.special;
 
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import org.bukkit.entity.Player;
@@ -42,5 +43,9 @@ public class DyeMenuProvider {
      */
     public static boolean hasMenuProvider() {
         return instance != null;
+    }
+
+    public static boolean canOpenDyeMenu() {
+        return hasMenuProvider() && Settings.isDyeMenuEnabled();
     }
 }

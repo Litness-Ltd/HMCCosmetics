@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.gui.special.impl.HMCColorDyeMenu;
+import com.hibiscusmc.hmccosmetics.gui.special.impl.InternalDyeMenu;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
@@ -33,6 +34,7 @@ import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.shaded.configupdater.common.config.CommentedConfiguration;
+import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.ConfigurationOptions;
 import me.lojosho.shaded.configurate.yaml.NodeStyle;
@@ -75,6 +77,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             saveResource("menus/defaultmenu_balloons.yml", false);
             saveResource("menus/defaultmenu_hands.yml", false);
             saveResource("menus/defaultmenu_backpacks.yml", false);
+        }
+        if (!Path.of(getDataFolder().getPath() + "/menus/functional/internal_dye_menu.yml").toFile().exists()) {
+            saveResource("menus/functional/internal_dye_menu.yml", false);
         }
         if (!Path.of(getDataFolder().getPath() + "/wardrobes/").toFile().exists()) {
             saveResource("wardrobes/defaultwardrobe.yml", false);
@@ -127,12 +132,21 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         }
 
         // HMCColor
-        if (Hooks.isActiveHook("HMCColor")) {
-            try {
+        try {
+            if (Settings.isPreferHMCColorDyeMenu() && Hooks.isActiveHook("HMCColor")) {
                 DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
-            } catch (IllegalStateException e) {
-                getLogger().warning("Unable to set HMCColor as the dye menu. There is likely another plugin registering another dye menu.");
+            } else {
+                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(Path.of(getDataFolder() + "/menus/functional/internal_dye_menu.yml")).build();
+                CommentedConfigurationNode root;
+                try {
+                    root = loader.load();
+                } catch (ConfigurateException e) {
+                    throw new RuntimeException(e);
+                }
+                DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu(root));
             }
+        } catch (IllegalStateException e) {
+            getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
         }
     }
 

@@ -122,6 +122,7 @@ menu-settings:
     equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
     unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/org/bukkit/event/inventory/ClickType.html
 dye-menu:
+  enabled: true
   # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_hmcc_dye_menu:"
   # If you use Oraxen, set this to "<white><s:-8><g:hmcc_dye_menu>"
   # If you use Nexo, set this to "<white><shift:-8><glyph:hmcc_dye_menu>"
@@ -143,6 +144,9 @@ hook-settings:
     player-move-check: true
   betterhud:
     wardrobe-hide: true
+  hmccolor:
+    # If HMCColor is available, prefer hmccolor dye menu rather than the internal menu. Requires a restart.
+    prefer-hmccolor-menu: false
 wardrobe:
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
