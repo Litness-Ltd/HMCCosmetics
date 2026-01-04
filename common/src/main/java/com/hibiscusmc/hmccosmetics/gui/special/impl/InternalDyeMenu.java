@@ -1,9 +1,11 @@
 package com.hibiscusmc.hmccosmetics.gui.special.impl;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import dev.triumphteam.gui.builder.gui.ChestGuiBuilder;
 import dev.triumphteam.gui.guis.Gui;
@@ -12,8 +14,11 @@ import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.ColorBuilder;
 import me.lojosho.hibiscuscommons.util.MessagesUtil;
+import me.lojosho.shaded.configurate.CommentedConfigurationNode;
+import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
+import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -24,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,21 +38,31 @@ import java.util.logging.Level;
 
 public class InternalDyeMenu implements DyeMenu {
 
-    private final List<PrimaryColor> PRIMARY_COLORS;
+    private List<PrimaryColor> PRIMARY_COLORS;
 
     private List<String> FORMAT = List.of();
-    private final int ROWS;
-    private final String FORMAT_STRING;
+    private int ROWS;
+    private String FORMAT_STRING;
     private final ArrayList<Integer> PRIMARY_COLORS_SLOTS = new ArrayList<>();
     private final ArrayList<Integer> SECONDARY_COLORS_SLOTS = new ArrayList<>();
 
-    private final int INPUT_SLOT;
-    private final int OUTPUT_SLOT;
+    private int INPUT_SLOT;
+    private int OUTPUT_SLOT;
 
     private @Nullable ItemStack PRIMARY_COLOR_ITEM = null;
     private @Nullable ItemStack SECONDARY_COLOR_ITEM = null;
 
-    public InternalDyeMenu(ConfigurationNode config) {
+    @Override
+    public void reload() {
+        YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(Path.of(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus/functional/internal_dye_menu.yml")).build();
+        CommentedConfigurationNode config;
+        try {
+            config = loader.load();
+        } catch (ConfigurateException e) {
+            throw new RuntimeException(e);
+        }
+
+
         try {
             FORMAT = config.node("format").getList(String.class);
         } catch (SerializationException e) {
@@ -78,7 +94,10 @@ public class InternalDyeMenu implements DyeMenu {
         if (!config.node("primary-color-item").virtual()) {
             try {
                 PRIMARY_COLOR_ITEM = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config.node("primary-color-item"));
-                if (PRIMARY_COLOR_ITEM.getType() == Material.AIR) PRIMARY_COLOR_ITEM = null;
+                if (PRIMARY_COLOR_ITEM.getType() == Material.AIR) {
+                    MessagesUtil.sendDebugMessages("Internal Dye Menu Primary Color Item has returned AIR, defaulting to use the cosmetic item itself", Level.WARNING);
+                    PRIMARY_COLOR_ITEM = null;
+                }
             } catch (SerializationException e) {
                 e.printStackTrace();
             }
@@ -86,7 +105,10 @@ public class InternalDyeMenu implements DyeMenu {
         if (!config.node("secondary-color-item").virtual()) {
             try {
                 SECONDARY_COLOR_ITEM = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config.node("secondary-color-item"));
-                if (SECONDARY_COLOR_ITEM.getType() == Material.AIR) SECONDARY_COLOR_ITEM = null;
+                if (SECONDARY_COLOR_ITEM.getType() == Material.AIR) {
+                    MessagesUtil.sendDebugMessages("Internal Dye Menu Secondary Color Item has returned AIR, defaulting to use the cosmetic item itself", Level.WARNING);
+                    SECONDARY_COLOR_ITEM = null;
+                }
             } catch (SerializationException e) {
                 e.printStackTrace();
             }

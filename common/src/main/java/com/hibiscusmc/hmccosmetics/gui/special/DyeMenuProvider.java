@@ -48,4 +48,11 @@ public class DyeMenuProvider {
     public static boolean canOpenDyeMenu() {
         return hasMenuProvider() && Settings.isDyeMenuEnabled();
     }
+
+    /**
+     * Runs the reload logic for the dye menu implementations.
+     */
+    public static void reload() {
+        if (instance != null) instance.reload();
+    }
 }

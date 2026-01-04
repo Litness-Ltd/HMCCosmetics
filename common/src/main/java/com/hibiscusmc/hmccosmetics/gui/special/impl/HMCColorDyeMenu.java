@@ -47,6 +47,11 @@ public class HMCColorDyeMenu implements DyeMenu {
         gui.open(viewer);
     }
 
+    @Override
+    public void reload() {
+        // Nothing
+    }
+
     private void addCosmetic(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic, @Nullable Color color) {
         cosmeticHolder.addCosmetic(cosmetic, color);
         viewer.setItemOnCursor(new ItemStack(Material.AIR));

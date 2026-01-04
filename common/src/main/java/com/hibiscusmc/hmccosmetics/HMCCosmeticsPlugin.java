@@ -102,6 +102,18 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // Move this over to Hibiscus Commons later
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new HMCPlaceholderExpansion().register();
 
+        // HMCColor
+        try {
+            if (Settings.isPreferHMCColorDyeMenu() && Hooks.isActiveHook("HMCColor")) {
+                DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
+            } else {
+                DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu());
+            }
+            // Reload method called in setup, do not need to call it here as all we do is set the provider.
+        } catch (IllegalStateException e) {
+            getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
+        }
+
         // Setup
         setup();
         setPacketInterface(new CosmeticPacketInterface());
@@ -129,24 +141,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
-        }
-
-        // HMCColor
-        try {
-            if (Settings.isPreferHMCColorDyeMenu() && Hooks.isActiveHook("HMCColor")) {
-                DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
-            } else {
-                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(Path.of(getDataFolder() + "/menus/functional/internal_dye_menu.yml")).build();
-                CommentedConfigurationNode root;
-                try {
-                    root = loader.load();
-                } catch (ConfigurateException e) {
-                    throw new RuntimeException(e);
-                }
-                DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu(root));
-            }
-        } catch (IllegalStateException e) {
-            getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
         }
     }
 
@@ -235,6 +229,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // Menus setup
         Menus.setup();
+
+        // Dye Menu Reload
+        DyeMenuProvider.reload();
 
         // For reloads
         /*
