@@ -153,19 +153,23 @@ public class TypeCosmetic extends Type {
             return itemStack;
         }
 
-        if (cosmeticHolder.hasCosmeticInSlot(cosmetic) && (!config.node("equipped-item").virtual() || !config.node("locked-equipped-item").virtual())) {
+        if (cosmeticHolder.hasCosmeticInSlot(cosmetic) && !config.node("equipped-item").virtual()) {
             MessagesUtil.sendDebugMessages("GUI Equipped Item");
-            ConfigurationNode equippedItem = config.node(cosmeticHolder.canEquipCosmetic(cosmetic, true) && !config.node("equipped-item").virtual() ? "equipped-item" : "locked-equipped-item");
+            ConfigurationNode equippedItem = config.node("equipped-item");
+
+            // If not defined, use the item defined in the regular item
             try {
                 if (equippedItem.node("material").virtual()) equippedItem.node("material").set(config.node("item", "material").getString());
             } catch (SerializationException e) {
-                // Nothing >:)
+                e.printStackTrace();
             }
+
             try {
                 itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, equippedItem);
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
+            MessagesUtil.sendDebugMessages("Equipped Item: " + itemStack);
             if (itemStack.hasItemMeta()) itemStack.setItemMeta(processItemMeta(viewer, itemStack.getItemMeta()));
             else MessagesUtil.sendDebugMessages("ItemStack has no ItemMeta in equipped item?");
             return itemStack;
@@ -174,11 +178,14 @@ public class TypeCosmetic extends Type {
         if (!cosmeticHolder.canEquipCosmetic(cosmetic, true) && !config.node("locked-item").virtual()) {
             MessagesUtil.sendDebugMessages("GUI Locked Item");
             ConfigurationNode lockedItem = config.node("locked-item");
+
+            // If not defined, use the item defined in the regular item
             try {
                 if (lockedItem.node("material").virtual()) lockedItem.node("material").set(config.node("item", "material").getString());
             } catch (SerializationException e) {
-                // Nothing >:)
+                e.printStackTrace();
             }
+
             try {
                 itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, lockedItem);
             } catch (SerializationException e) {
