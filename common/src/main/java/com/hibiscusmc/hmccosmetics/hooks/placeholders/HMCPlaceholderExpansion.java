@@ -110,27 +110,23 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 }
             case "equipped":
                 if (placeholderArgs.size() >= 2) {
-                    String args1 = placeholderArgs.get(1);
-
-                    String rawSlot = args1.toUpperCase();
+                    StringBuilder lookupStringBuilder = new StringBuilder();
+                    for (int i = 1; i < placeholderArgs.size(); i++) {
+                        String append = placeholderArgs.get(i);
+                        if (lookupStringBuilder.isEmpty()) lookupStringBuilder.append(append);
+                        else lookupStringBuilder.append("_").append(append);
+                    }
+                    String lookupString = lookupStringBuilder.toString();
+                    String rawSlot = lookupString.toUpperCase();
                     if (CosmeticSlot.contains(rawSlot)) {
-                        return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(CosmeticSlot.valueOf(args1.toUpperCase())) != null));
+                        return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(CosmeticSlot.valueOf(lookupString.toUpperCase())) != null));
                     }
 
-                    MessagesUtil.sendDebugMessages(args1);
+                    MessagesUtil.sendDebugMessages(lookupString);
 
-                    Cosmetic cosmetic = Cosmetics.getCosmetic(args1);
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(lookupString);
                     if (cosmetic == null) {
-                        if (placeholderArgs.size() == 3) {
-                            Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
-                            if (secondAttemptCosmetic == null) {
-                                return "INVALID_COSMETIC";
-                            } else {
-                                cosmetic = secondAttemptCosmetic;
-                            }
-                        } else {
-                            return "INVALID_COSMETIC";
-                        }
+                        return "INVALID_COSMETIC";
                     }
                     Cosmetic equippedCosmetic = user.getCosmetic(cosmetic.getSlot());
                     if (equippedCosmetic == null) return TranslationUtil.getTranslation("equipped-cosmetic", "false");
