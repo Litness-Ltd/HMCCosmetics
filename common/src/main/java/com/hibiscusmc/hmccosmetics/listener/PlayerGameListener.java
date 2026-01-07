@@ -14,11 +14,9 @@ import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
-import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -37,7 +35,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
@@ -221,7 +222,7 @@ public class PlayerGameListener implements Listener {
             List<Player> viewers = HMCCPacketManager.getViewers(user.getEntity().getLocation());
             if (viewers.isEmpty()) return;
             viewers.remove(user.getPlayer());
-            PacketManager.equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
+            HMCCPacketManager.equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
         }, 2);
     }
 

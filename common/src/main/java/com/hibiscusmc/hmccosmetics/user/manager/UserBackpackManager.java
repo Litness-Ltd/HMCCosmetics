@@ -7,7 +7,6 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
-import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -90,9 +89,9 @@ public class UserBackpackManager {
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
-            if (!user.isHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
+            if (!user.isHidden()) HMCCPacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
-        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
+        HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
@@ -131,11 +130,11 @@ public class UserBackpackManager {
     }
 
     public void setItem(ItemStack item) {
-        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
+        HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
     }
 
     public void clearItems() {
         ItemStack item = new ItemStack(Material.AIR);
-        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
+        HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
     }
 }

@@ -9,7 +9,6 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEntity;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
-import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -63,7 +62,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
 
         if(!newViewers.isEmpty()) {
             HMCCPacketManager.spawnInvisibleArmorstand(firstArmorStandId, entityLocation, UUID.randomUUID(), newViewers);
-            PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), newViewers);
+            HMCCPacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), newViewers);
 
             if (user.getPlayer() != null) {
                 AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
@@ -101,7 +100,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
             HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), firstArmorStandId, owner);
             if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, owner);
             if (!user.isHidden()) {
-                PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                HMCCPacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
         }
 
