@@ -92,7 +92,7 @@ allprojects {
         compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.8.1-d9fbae1d")
+        compileOnly("me.lojosho:HibiscusCommons:0.8.3-a89bcec3")
 
         // Handled by Spigot Library Loader ~ Deprecated as of Dec 16, 2025
         /*
