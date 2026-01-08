@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
@@ -316,12 +317,8 @@ public class HMCCPacketManager {
     }
 
     public static void sendEntityDestroyPacket(List<Integer> entities, List<Player> sendTo) {
-        IntList destroyingEntities = IntList.of();
-        destroyingEntities.addAll(entities);
-        NMSHandlers.getHandler().getPacketBuilder().buildEntityDestroyPacket(destroyingEntities).sendPacket(sendTo);
+        NMSHandlers.getHandler().getPacketBuilder().buildEntityDestroyPacket(new IntArrayList(entities)).sendPacket(sendTo);
     }
-
-
 
     public static void sendRotateHeadPacket(int entityId, Location location, List<Player> sendTo) {
         NMSHandlers.getHandler().getPacketBuilder().buildEntityRotateHeadPacket(entityId, location.getYaw()).sendPacket(sendTo);
