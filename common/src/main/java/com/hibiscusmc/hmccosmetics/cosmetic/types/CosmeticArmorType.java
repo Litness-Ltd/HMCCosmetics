@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
 public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavior {
@@ -59,6 +61,15 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
                 && HibiscusCommonsPlugin.isOnPaper()
                 && HMCCInventoryUtils.isGlider(physicalEquippedItem)) {
             cosmeticItem.editMeta(itemMeta -> itemMeta.setGlider(true));
+        }
+        if (Settings.getSlotOption(equipSlot).isAttemptDamagePassthrough()
+        && (physicalEquippedItem.getItemMeta() instanceof Damageable physicalItemDamageable)) {
+            cosmeticItem.editMeta(itemMeta -> {
+                if (physicalItemDamageable.hasMaxDamage())
+                    cosmeticItem.setData(DataComponentTypes.MAX_DAMAGE, physicalItemDamageable.getMaxDamage());
+                if (physicalItemDamageable.hasDamage())
+                    cosmeticItem.setData(DataComponentTypes.DAMAGE, physicalItemDamageable.getDamage());
+            });
         }
         // Basically, if force offhand is off AND there is no item in an offhand slot, then the equipment packet to add the cosmetic
         return cosmeticItem;
