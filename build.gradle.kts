@@ -63,6 +63,9 @@ allprojects {
 
         // Hibiscus Commons
         maven("https://repo.hibiscusmc.com/releases")
+
+        // Nexo
+        maven("https://repo.nexomc.com/releases")
     }
 
     dependencies {
@@ -90,6 +93,7 @@ allprojects {
         annotationProcessor("org.projectlombok:lombok:1.18.36")
         testCompileOnly("org.projectlombok:lombok:1.18.36")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+        compileOnly("com.nexomc:nexo:1.24.0")
 
         implementation("dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT") {
             exclude("net.kyori") // Already have adventure API
@@ -101,6 +105,8 @@ allprojects {
             // javadoc spec has these added.
             (options as StandardJavadocDocletOptions)
                 .tags("apiNote:a:API:", "implSpec:a:Implementation Requirements", "implNote:a:Implementation Note:")
+            // The codebase isn't fully javadoc'd; silence doclint's "no comment" (and other) noise.
+            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
         }
     }
 }

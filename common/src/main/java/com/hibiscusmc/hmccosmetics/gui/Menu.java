@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.gui.type.ShadingType;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
@@ -16,22 +17,32 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.papermc.paper.datacomponent.item.CustomModelData;
 import lombok.Getter;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.DyedItemColor;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class Menu {
 
@@ -50,8 +61,6 @@ public class Menu {
     private final HashMap<Integer, List<MenuItem>> items;
     @Getter
     private final int refreshRate;
-    @Getter
-    private final boolean shading;
 
     public Menu(String id, @NotNull ConfigurationNode config) {
         this.id = config.node("id").getString(id);
@@ -62,7 +71,6 @@ public class Menu {
         cooldown = config.node("click-cooldown").getLong(Settings.getDefaultMenuCooldown());
         permissionNode = config.node("permission").getString("");
         refreshRate = config.node("refresh-rate").getInt(-1);
-        shading = config.node("shading").getBoolean(Settings.isDefaultShading());
 
         items = new HashMap<>();
         setupItems();
@@ -207,68 +215,129 @@ public class Menu {
         StringBuilder title = new StringBuilder(this.title);
 
         int row = 0;
-        if (shading) {
-            for (int i = 0; i < gui.getInventory().getSize(); i++) {
-                // Handles the title
-                if (i % 9 == 0) {
-                    if (row == 0) {
-                        title.append(Settings.getFirstRowShift()); // Goes back to the start of the gui
-                    } else {
-                        title.append(Settings.getSequentRowShift());
-                    }
-                    row += 1;
-                } else {
-                    title.append(Settings.getIndividualColumnShift()); // Goes to the next slot
-                }
-
-                boolean occupied = false;
-
-                if (items.containsKey(i)) {
-                    // Handles the items
-                    List<MenuItem> menuItems = items.get(i);
-                    MenuItem item = menuItems.get(0);
-                    updateItem(viewer, cosmeticHolder, gui, i);
-
-                    if (item.type() instanceof TypeCosmetic) {
-                        Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
-                        if (cosmetic == null) continue;
-                        if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) {
-                            title.append(Settings.getEquippedCosmeticColor());
+        switch (Settings.getShadingType()) {
+            case TEXT -> {
+                for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                    // Handles the title
+                    if (i % 9 == 0) {
+                        if (row == 0) {
+                            title.append(Settings.getFirstRowShift()); // Goes back to the start of the gui
                         } else {
-                            if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) {
-                                title.append(Settings.getEquipableCosmeticColor());
-                            } else {
-                                title.append(Settings.getLockedCosmeticColor());
-                            }
+                            title.append(Settings.getSequentRowShift());
                         }
-                        occupied = true;
+                        row += 1;
+                    } else {
+                        title.append(Settings.getIndividualColumnShift()); // Goes to the next slot
+                    }
+
+                    boolean occupied = false;
+
+                    if (items.containsKey(i)) {
+                        // Handles the items
+                        List<MenuItem> menuItems = items.get(i);
+                        MenuItem item = menuItems.getFirst();
+                        updateItem(viewer, cosmeticHolder, gui, i);
+
+                        if (item.type() instanceof TypeCosmetic) {
+                            Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
+                            if (cosmetic == null) continue;
+                            if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) {
+                                title.append(Settings.getEquippedCosmeticColor());
+                            } else {
+                                if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) {
+                                    title.append(Settings.getEquipableCosmeticColor());
+                                } else {
+                                    title.append(Settings.getLockedCosmeticColor());
+                                }
+                            }
+                            occupied = true;
+                        }
+                    }
+                    if (occupied) {
+                        title.append(Settings.getBackground().replaceAll("<row>", String.valueOf(row)));
+                    } else {
+                        title.append(Settings.getClearBackground().replaceAll("<row>", String.valueOf(row)));
                     }
                 }
-                if (occupied) {
-                    title.append(Settings.getBackground().replaceAll("<row>", String.valueOf(row)));
-                } else {
-                    title.append(Settings.getClearBackground().replaceAll("<row>", String.valueOf(row)));
+                MessagesUtil.sendDebugMessages("Updated menu with title " + title);
+                gui.updateTitle(AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(viewer, title.toString())));
+            }
+            case MODERN -> {
+                TextColor equippableColor = resolveStateColor(Settings.getEquipableCosmeticColor());
+                TextColor equippedColor = resolveStateColor(Settings.getEquippedCosmeticColor());
+                TextColor lockedColor = resolveStateColor(Settings.getLockedCosmeticColor());
+
+                for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                    if (items.containsKey(i)) {
+                        List<MenuItem> menuItems = items.get(i);
+                        MenuItem item = menuItems.getFirst();
+                        updateItem(viewer, cosmeticHolder, gui, i, (itemStack -> {
+                            // Handles the items
+                            if (item.type() instanceof TypeCosmetic) {
+                                Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
+                                if (cosmetic == null) return;
+
+                                Key itemKey = Key.key("hmccosmetics", cosmetic.getId() + "_shading");
+                                itemStack.setData(DataComponentTypes.ITEM_MODEL, itemKey);
+
+
+
+                                CustomModelData.Builder builder = CustomModelData.customModelData();
+                                if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) builder.addColor(Color.fromRGB(equippedColor.value()));
+                                else if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) builder.addColor(Color.fromRGB(equippableColor.value()));
+                                else builder.addColor(Color.fromRGB(lockedColor.value()));
+
+                                CustomModelData cmd = itemStack.getData(DataComponentTypes.CUSTOM_MODEL_DATA);
+                                if (cmd != null) builder.addFlags(cmd.flags()).addFloats(cmd.floats()).addStrings(cmd.strings());
+
+                                itemStack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, builder.build());
+                            }
+                        }));
+                    }
                 }
             }
-            MessagesUtil.sendDebugMessages("Updated menu with title " + title);
-            gui.updateTitle(AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(viewer, title.toString())));
-        } else {
-            for (int i = 0; i < gui.getInventory().getSize(); i++) {
-                if (items.containsKey(i)) {
-                    updateItem(viewer, cosmeticHolder, gui, i);
+            case null, default -> {
+                for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                    if (items.containsKey(i)) {
+                        updateItem(viewer, cosmeticHolder, gui, i);
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Resolves a MiniMessage-formatted color string into a {@link TextColor}, falling back to white
+     * if the string is null or carries no explicit color (avoids an NPE when used for MODERN shading dye).
+     */
+    private static TextColor resolveStateColor(String miniMessage) {
+        if (miniMessage == null) return NamedTextColor.WHITE;
+        TextColor color = MiniMessage.miniMessage().deserialize(miniMessage).color();
+        return color != null ? color : NamedTextColor.WHITE;
+    }
+
     private void updateItem(Player viewer, CosmeticHolder cosmeticHolder, Gui gui, int slot) {
+        updateItem(viewer, cosmeticHolder, gui, slot, null);
+    }
+
+    private void updateItem(Player viewer, CosmeticHolder cosmeticHolder, Gui gui, int slot, @Nullable Consumer<ItemStack> consumer) {
         if (!items.containsKey(slot)) return;
         List<MenuItem> menuItems = items.get(slot);
         if (menuItems.isEmpty()) return;
 
         for (MenuItem item : menuItems) {
             Type type = item.type();
-            ItemStack modifiedItem = getMenuItem(viewer, cosmeticHolder, type, item.itemConfig(), item.item().clone(), slot);
+            ItemStack itemStack = item.item().clone();
+            ItemStack modifiedItem = getMenuItem(viewer, cosmeticHolder, type, item.itemConfig(), itemStack, slot);
+            if (consumer != null) {
+                // Shading decoration is best-effort: a failure here must never stop the item from
+                // being placed, otherwise the whole menu renders empty.
+                try {
+                    consumer.accept(modifiedItem);
+                } catch (Exception e) {
+                    MessagesUtil.sendDebugMessages("Failed to apply shading to menu item in slot " + slot + ": " + e.getMessage());
+                }
+            }
             if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {

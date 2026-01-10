@@ -19,6 +19,7 @@ import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookVulcan;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
+import com.hibiscusmc.hmccosmetics.hooks.resourcepack.HookNexo;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.*;
@@ -130,6 +131,12 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
+        }
+        // Nexo resource-pack shading. Registered as a plain listener (not a HibiscusCommons Hook) so it
+        // doesn't collide with HibiscusCommons' own "Nexo" item hook, and only when Nexo is present so
+        // reflecting over its NexoPack event handlers doesn't hit missing classes.
+        if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
+            getServer().getPluginManager().registerEvents(new HookNexo(), this);
         }
         // Database
         new Database();

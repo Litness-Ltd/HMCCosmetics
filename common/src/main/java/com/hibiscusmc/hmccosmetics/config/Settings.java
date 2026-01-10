@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.section.SlotOptionConfig;
+import com.hibiscusmc.hmccosmetics.gui.type.ShadingType;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.search.PlayerSearchManager;
 import lombok.Getter;
@@ -59,6 +60,7 @@ public class Settings {
     private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
     private static final String DYE_CLICK_TYPE = "dye-click";
     private static final String SHADING_PATH = "shading";
+    private static final String TYPE = "type";
     private static final String FIRST_ROW_SHIFT_PATH = "first-row-shift";
     private static final String SEQUENT_ROW_SHIFT_PATH = "sequent-row-shift";
     private static final String INDIVIDUAL_COLUMN_SHIFT_PATH = "individual-column-shift";
@@ -147,6 +149,14 @@ public class Settings {
     private static String cosmeticDyeClickType;
     @Getter
     private static boolean defaultShading;
+    @Getter
+    private static ShadingType shadingType;
+    @Getter
+    private static String equippableCosmeticReference;
+    @Getter
+    private static String equippedCosmeticReference;
+    @Getter
+    private static String lockedCosmeticReference;
     @Getter
     private static String firstRowShift;
     @Getter
@@ -240,7 +250,12 @@ public class Settings {
         defaultMenuCooldown = clickCooldownSettings.node(MENU_CLICK_COOLDOWN_TIME_PATH).getLong(1000L);
 
         ConfigurationNode shadingSettings = menuSettings.node(SHADING_PATH);
-        defaultShading = shadingSettings.node(ENABLED_PATH).getBoolean();
+        // Honour the legacy "enabled" boolean as a fallback for configs that predate the "type" key:
+        // enabled: true -> TEXT (the old shading behaviour), enabled/absent: false -> NONE.
+        // MODERN is opt-in only and must be selected explicitly via "type", so upgrading servers
+        // never get switched onto it silently.
+        ShadingType defaultShadingType = shadingSettings.node(ENABLED_PATH).getBoolean(false) ? ShadingType.TEXT : ShadingType.NONE;
+        shadingType = ShadingType.fromString(shadingSettings.node(TYPE).getString(""), defaultShadingType);
         firstRowShift = shadingSettings.node(FIRST_ROW_SHIFT_PATH).getString();
         sequentRowShift = shadingSettings.node(SEQUENT_ROW_SHIFT_PATH).getString();
         individualColumnShift = shadingSettings.node(INDIVIDUAL_COLUMN_SHIFT_PATH).getString();
