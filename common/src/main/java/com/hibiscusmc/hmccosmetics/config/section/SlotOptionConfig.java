@@ -14,13 +14,13 @@ public class SlotOptionConfig {
     @Getter
     private final boolean addElytraComponent;
     @Getter
-    private final boolean attemptDamagePassthrough;
+    private final boolean itemDamagePassThrough;
 
-    public SlotOptionConfig(EquipmentSlot slot, boolean addEnchantments, boolean requireEmpty, boolean addElytraComponent, boolean attemptDamagePassthrough) {
+    public SlotOptionConfig(EquipmentSlot slot, boolean addEnchantments, boolean requireEmpty, boolean addElytraComponent, boolean itemDamagePassThrough) {
         this.slot = slot;
         this.addEnchantments = addEnchantments;
         this.requireEmpty = requireEmpty;
         this.addElytraComponent = addElytraComponent;
-        this.attemptDamagePassthrough = attemptDamagePassthrough;
+        this.itemDamagePassThrough = itemDamagePassThrough;
     }
 }
