@@ -55,7 +55,7 @@ steps:
         
         JAR_DIR="$(dirname "$JAR")"
         JAR_BASE="$(basename "$JAR" .jar)"
-        JAR_WITH_HASH="$JAR_DIR/$JAR_BASE.$LASTCOMMITHASH.jar"
+        JAR_WITH_HASH="$JAR_DIR/$JAR_BASE-$LASTCOMMITHASH.jar"
         cp "$JAR" "$JAR_WITH_HASH"
 
         # generate changelog
