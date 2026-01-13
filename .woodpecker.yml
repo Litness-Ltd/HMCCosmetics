@@ -41,8 +41,8 @@ steps:
       - |
         set -eu
 
-        # get built jar
-        JAR="$(ls -1 build/libs/*.jar 2>/dev/null | head -n1 || true)"
+        # get built jar (prefer HMCCosmeticsRemapped-*.jar, fallback to any jar)
+        JAR="$(ls -1 build/libs/HMCCosmeticsRemapped-*.jar 2>/dev/null | head -n1 || ls -1 build/libs/*.jar 2>/dev/null | grep -v javadoc | grep -v sources | head -n1 || true)"
         if [ -z "$JAR" ]; then
           echo "Error: could not find JAR"
           ls -la build/libs || true
