@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -22,10 +23,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CosmeticPacketInterface implements PacketInterface {
 
@@ -127,9 +125,8 @@ public class CosmeticPacketInterface implements PacketInterface {
 
     @Override
     public @NotNull PacketAction writePassengerContent(@NotNull Player player, @NotNull PassengerWrapper wrapper) {
-        // TODO: Figure out what to do with this, because with it in, it ruins backpacks (they keep getting thrown to random locations).
-        return PacketAction.NOTHING;
-        /*
+        if (!Settings.isBackpackInterceptPassengerPacket()) return PacketAction.NOTHING;
+
         CosmeticUser viewerUser = CosmeticUsers.getUser(player);
         if (viewerUser == null || viewerUser.isInWardrobe()) return PacketAction.NOTHING;
 
@@ -142,6 +139,7 @@ public class CosmeticPacketInterface implements PacketInterface {
         Cosmetic backpackCosmetic = user.getCosmetic(CosmeticSlot.BACKPACK);
         if (backpackCosmetic == null) return PacketAction.NOTHING;
         if (!(backpackCosmetic instanceof CosmeticBackpackType cosmeticBackpackType)) return PacketAction.NOTHING;
+        // If a player is viewing their own backpack, don't do anything
         if (user.getUniqueId().equals(viewerUser.getUniqueId())) {
             if (cosmeticBackpackType.isFirstPersonCompadible()) return PacketAction.NOTHING;
         }
@@ -149,11 +147,10 @@ public class CosmeticPacketInterface implements PacketInterface {
         if (user.getUserBackpackManager() == null) return PacketAction.NOTHING;
 
         List<Integer> originalPassengers = wrapper.getPassengers();
-        List<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getEntityManager().getIds());
+        List<Integer> passengers = new ArrayList<>(user.getUserBackpackManager().getFirstArmorStandId());
         passengers.addAll(originalPassengers);
         wrapper.setPassengers(passengers);
         return PacketAction.CHANGED;
-         */
     }
 
     @Override
