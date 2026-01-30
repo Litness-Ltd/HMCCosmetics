@@ -17,15 +17,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A hook that integrates the plugin {@link me.clip.placeholderapi.PlaceholderAPIPlugin PlaceholderAPIPlugin}
  */
 public class HMCPlaceholderExpansion extends PlaceholderExpansion {
-    private static boolean papiEnabled = false;
 
     public HMCPlaceholderExpansion() {
-        papiEnabled = true;
+
     }
 
     @Override
@@ -42,6 +42,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     @NotNull
+    @SuppressWarnings("deprecation")
     public String getVersion() {
         return HMCCosmeticsPlugin.getInstance().getDescription().getVersion();
     }
@@ -54,7 +55,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(@NotNull OfflinePlayer player, @NotNull String params) {
         if (!player.isOnline()) return TranslationUtil.getTranslation("user-cosmetic", "offline");
-        CosmeticUser user = CosmeticUsers.getUser(player.getPlayer());
+        CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
         if (user == null) return TranslationUtil.getTranslation("user-cosmetic", "invalid-user");
 
         List<String> placeholderArgs = Arrays.asList(params.split("_", 3));
@@ -66,7 +67,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (cosmetic == null) return "INVALID_COSMETIC";
                     Cosmetic currentCosmetic = user.getCosmetic(cosmetic.getSlot());
                     if (currentCosmetic == null) return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(false)); // I hate this way of handling translations
-                    if (currentCosmetic.getId() == cosmetic.getId()) return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(true));
+                    if (Objects.equals(currentCosmetic.getId(), cosmetic.getId())) return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(true));
                     return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(false));
                 }
             case "current":
@@ -75,7 +76,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (slot == null) return null;
                     Cosmetic cosmetic = user.getCosmetic(slot);
                     if (cosmetic == null) return TranslationUtil.getTranslation("current-cosmetic", "no-cosmetic");
-                    if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
+                    if (placeholderArgs.size() == 2) return cosmetic.getId();
 
                     String output;
                     switch (placeholderArgs.get(2).toLowerCase()) {
@@ -85,8 +86,8 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                         case "itemname" -> output = getItemName(cosmetic);
                         case "name" -> output = getDisplayName(cosmetic);
                         case "lore" -> output = getItemLore(cosmetic);
-                        case "permission" -> output = user.getCosmetic(slot).getPermission();
-                        default -> output = user.getCosmetic(slot).getId();
+                        case "permission" -> output = cosmetic.getPermission();
+                        default -> output = cosmetic.getId();
                     }
                     if (output == null) output = "none";
                     return TranslationUtil.getTranslation("current-cosmetic", output);
@@ -118,8 +119,10 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     }
                     String lookupString = lookupStringBuilder.toString();
                     String rawSlot = lookupString.toUpperCase();
-                    if (CosmeticSlot.contains(rawSlot)) {
-                        return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(CosmeticSlot.valueOf(lookupString.toUpperCase())) != null));
+                    //if (CosmeticSlot.contains(rawSlot)) {
+                    CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot);
+                    if (slot != null) {
+                        return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(slot) != null));
                     }
 
                     MessagesUtil.sendDebugMessages(lookupString);
@@ -204,8 +207,6 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         return String.valueOf(itemMeta.getCustomModelData());
     }
 
-
-
     /**
      * Gets the cosmetic items item model
      * @param cosmetic The cosmetic to get its item model
@@ -218,20 +219,19 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
             if (item == null) return null;
             if (!item.hasItemMeta()) return null;
             ItemMeta itemMeta = item.getItemMeta();
-            if (itemMeta == null && itemMeta.hasItemModel() ) return null;
+            if (itemMeta == null || !itemMeta.hasItemModel() || itemMeta.getItemModel() == null) return null;
             return itemMeta.getItemModel().asString();
         } catch (Exception e) {
             return null;
         }
     }
 
-
-
     /**
      * Gets the cosmetic items item name
      * @param cosmetic The cosmetic to get its items item name
      * @return The cosmetic items item name
      */
+    @SuppressWarnings("deprecation")
     @Nullable
     public String getItemName(@NotNull Cosmetic cosmetic) {
         try {
@@ -251,6 +251,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
      * @param cosmetic The cosmetic to get its items display name
      * @return The cosmetic items display name
      */
+    @SuppressWarnings("deprecation")
     @Nullable
     public String getDisplayName(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
@@ -267,6 +268,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
      * @param cosmetic The cosmetic to get its items lore
      * @return The cosmetic items lore
      */
+    @SuppressWarnings("deprecation")
     @Nullable
     public String getItemLore(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
