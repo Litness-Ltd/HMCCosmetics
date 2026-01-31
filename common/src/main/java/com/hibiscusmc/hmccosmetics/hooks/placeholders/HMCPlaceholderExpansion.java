@@ -76,7 +76,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (slot == null) return null;
                     Cosmetic cosmetic = user.getCosmetic(slot);
                     if (cosmetic == null) return TranslationUtil.getTranslation("current-cosmetic", "no-cosmetic");
-                    if (placeholderArgs.size() == 2) return cosmetic.getId();
+                    if (placeholderArgs.size() == 2) return TranslationUtil.getTranslation("current-cosmetic", cosmetic.getId());
 
                     String output;
                     switch (placeholderArgs.get(2).toLowerCase()) {
