@@ -94,19 +94,15 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 }
             case "unlocked":
                 if (placeholderArgs.size() >= 2) {
-                    Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
-                    if (cosmetic == null) {
-                        if (placeholderArgs.size() >= 3) {
-                            Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
-                            if (secondAttemptCosmetic == null) {
-                                return "INVALID_COSMETIC";
-                            } else {
-                                cosmetic = secondAttemptCosmetic;
-                            }
-                        } else {
-                            return "INVALID_COSMETIC";
-                        }
+                    StringBuilder lookupStringBuilder = new StringBuilder();
+                    for (int i = 1; i < placeholderArgs.size(); i++) {
+                        String append = placeholderArgs.get(i);
+                        if (lookupStringBuilder.isEmpty()) lookupStringBuilder.append(append);
+                        else lookupStringBuilder.append("_").append(append);
                     }
+
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(lookupStringBuilder.toString());
+                    if (cosmetic == null) return "INVALID_COSMETIC";
                     return TranslationUtil.getTranslation("unlocked-cosmetic", String.valueOf(user.canEquipCosmetic(cosmetic, true)));
                 }
             case "equipped":
