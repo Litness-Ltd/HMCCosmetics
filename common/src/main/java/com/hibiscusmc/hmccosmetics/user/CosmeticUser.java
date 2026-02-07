@@ -690,14 +690,15 @@ public class CosmeticUser implements CosmeticHolder {
         }
     }
 
-    public void hideCosmetics(HiddenReason reason) {
+    public void hideCosmetics(@NotNull HiddenReason reason) {
+        if (hiddenReason.contains(reason)) return;
+
         PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
-
-        if (!hiddenReason.contains(reason)) hiddenReason.add(reason);
+        hiddenReason.add(reason);
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             despawnBalloon();
             //getBalloonManager().removePlayerFromModel(getPlayer());
@@ -714,14 +715,15 @@ public class CosmeticUser implements CosmeticHolder {
      * This is used to silently add a hidden flag to the user. This will not trigger any events or checks, nor do anything else
      * @param reason
      */
-    public void silentlyAddHideFlag(HiddenReason reason) {
+    public void silentlyAddHideFlag(@NotNull HiddenReason reason) {
         if (!hiddenReason.contains(reason)) hiddenReason.add(reason);
     }
 
-    public void showCosmetics(HiddenReason reason) {
+    public void showCosmetics(@NotNull HiddenReason reason) {
         if (hiddenReason.isEmpty()) return;
+        if (!hiddenReason.contains(reason)) return;
 
-        PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this);
+        PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this, reason);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
