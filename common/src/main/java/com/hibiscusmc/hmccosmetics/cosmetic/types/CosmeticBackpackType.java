@@ -9,6 +9,9 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEntity;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.hibiscuscommons.nms.NMSPacketBuilder;
+import me.lojosho.hibiscuscommons.packets.wrapper.PacketWrapper;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -59,15 +63,24 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         int firstArmorStandId = backpackManager.getFirstArmorStandId();
 
         List<Player> newViewers = entityManager.refreshViewers(loc);
+        NMSPacketBuilder packetBuilder = NMSHandlers.getHandler().getPacketBuilder();
+
+        final ArrayList<PacketWrapper> newViewerBundle = new ArrayList<>();
 
         if(!newViewers.isEmpty()) {
-            HMCCPacketManager.spawnInvisibleArmorstand(firstArmorStandId, entityLocation, UUID.randomUUID(), newViewers);
-            HMCCPacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), newViewers);
+            newViewerBundle.addAll(HMCCPacketManager.getInvisibleArmorStand(firstArmorStandId, entityLocation, UUID.randomUUID()));
+            newViewerBundle.add(packetBuilder.buildEntityEquipmentSlotUpdatePacket(firstArmorStandId, Map.of(EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()))));
 
             if (user.getPlayer() != null) {
                 AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
                 if (scaleAttribute != null) {
-                    HMCCPacketManager.sendEntityScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), scaleAttribute.getValue(), newViewers);
+                    newViewerBundle.add(packetBuilder.buildEntityAttributePacket(user.getUserBackpackManager().getFirstArmorStandId(), Attribute.SCALE, scaleAttribute.getValue()));
+                    /*
+                    ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
+                    for (int i : particleCloud) {
+                        wrapper.add(packetBuilder.buildEntityAttributePacket(i, Attribute.SCALE, scaleAttribute.getValue()));
+                    }
+                     */
                 }
             }
         }
@@ -82,28 +95,31 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
             HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, entityManager.getViewers());
             if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, entityManager.getViewers());
         } else {
-            HMCCPacketManager.sendRidingPacket(entity.getEntityId(), firstArmorStandId, newViewers);
-            if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, newViewers);
+            newViewerBundle.add(packetBuilder.buildEntityMountPacket(entity.getEntityId(), new int[]{firstArmorStandId}));
+            if (hasExistingPassengers) newViewerBundle.add(packetBuilder.buildEntityMountPacket(firstArmorStandId, existingPassengers));
         }
 
         if (isFirstPersonCompadible() && !user.isInWardrobe() && user.getPlayer() != null) {
-            List<Player> owner = List.of(user.getPlayer());
+            final ArrayList<PacketWrapper> ownerBundle = new ArrayList<>();
 
             ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
             for (int i = 0; i < particleCloud.size(); i++) {
                 if (i == 0) {
-                    HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
+                    ownerBundle.add(packetBuilder.buildEntityMountPacket(entity.getEntityId(), new int[]{particleCloud.get(i)}));
                 } else {
-                    HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
+                    ownerBundle.add(packetBuilder.buildEntityMountPacket(particleCloud.get(i - 1), new int[]{particleCloud.get(i)}));
                 }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), firstArmorStandId, owner);
-            if (hasExistingPassengers) HMCCPacketManager.sendRidingPacket(firstArmorStandId, existingPassengers, owner);
+            ownerBundle.add(packetBuilder.buildEntityMountPacket(particleCloud.getLast(), new int[]{firstArmorStandId}));
+            if (hasExistingPassengers) ownerBundle.add(packetBuilder.buildEntityMountPacket(firstArmorStandId, existingPassengers));
             if (!user.isHidden()) {
-                HMCCPacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                ownerBundle.add(packetBuilder.buildEntityEquipmentSlotUpdatePacket(firstArmorStandId, Map.of(EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack))));
             }
+
+            NMSHandlers.getHandler().getPacketSender().sendBundle(ownerBundle, user.getPlayer());
         }
 
+        NMSHandlers.getHandler().getPacketSender().sendBundle(newViewerBundle, newViewers);
         backpackManager.showBackpack();
     }
 

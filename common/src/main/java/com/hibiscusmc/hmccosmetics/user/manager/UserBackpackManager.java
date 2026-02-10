@@ -6,6 +6,9 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.hibiscuscommons.nms.NMSPacketBuilder;
+import me.lojosho.hibiscuscommons.packets.wrapper.PacketWrapper;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -18,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class UserBackpackManager {
@@ -53,14 +57,21 @@ public class UserBackpackManager {
     private void spawn(CosmeticBackpackType cosmeticBackpackType) {
         getEntityManager().setIds(List.of(invisibleArmorStand));
         getEntityManager().teleport(user.getEntity().getLocation());
-        List<Player> outsideViewers = getEntityManager().getViewers();
+        final List<Player> outsideViewers = getEntityManager().getViewers();
 
-        HMCCPacketManager.spawnInvisibleArmorstand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID(), outsideViewers);
+        NMSPacketBuilder packetBuilder = NMSHandlers.getHandler().getPacketBuilder();
 
+        final List<PacketWrapper> outsideBundle = new ArrayList<>(16);
+        final List<PacketWrapper> ownerBundle = new ArrayList<>(16);
+
+        outsideBundle.addAll(HMCCPacketManager.getInvisibleArmorStand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID()));
+
+        double scaleValue = 1;
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
             if (scaleAttribute != null) {
-                HMCCPacketManager.sendEntityScalePacket(getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
+                scaleValue = scaleAttribute.getValue();
+                outsideBundle.add(packetBuilder.buildEntityAttributePacket(getFirstArmorStandId(), Attribute.SCALE, scaleValue));
             }
         }
 
@@ -74,25 +85,26 @@ public class UserBackpackManager {
 
         passengerIDs[passengerIDs.length - 1] = this.getFirstArmorStandId();
 
-        ArrayList<Player> owner = new ArrayList<>();
-        if (user.getPlayer() != null) owner.add(user.getPlayer());
-
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
             for (int i = particleCloud.size(); i < cosmeticBackpackType.getHeight(); i++) {
                 int entityId = ServerUtils.getNextEntityId();
-                HMCCPacketManager.spawnCloudAndHandleEffect(entityId, user.getEntity().getLocation(), UUID.randomUUID(), HMCCPacketManager.getViewers(user.getEntity().getLocation()));
+                ownerBundle.addAll(HMCCPacketManager.getCloudHandleEffect(entityId, user.getEntity().getLocation(), UUID.randomUUID()));
+                //if (scaleValue != 1) ownerBundle.add(packetBuilder.buildEntityAttributePacket(entityId, Attribute.SCALE, scaleValue)); // Todo: figure out how to impl scaling, area clouds can not scale and will kick the player if sent
                 this.particleCloud.add(entityId);
             }
             // Copied code from updating the backpack
             for (int i = 0; i < particleCloud.size(); i++) {
-                if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
-                else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
+                if (i == 0) ownerBundle.add(packetBuilder.buildEntityMountPacket(entity.getEntityId(), new int[]{particleCloud.get(i)}));
+                else ownerBundle.add(packetBuilder.buildEntityMountPacket(particleCloud.get(i - 1), new int[]{particleCloud.get(i)}));
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
-            if (!user.isHidden()) HMCCPacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
+            ownerBundle.add(packetBuilder.buildEntityMountPacket(particleCloud.getLast(), new int[]{getFirstArmorStandId()}));
+            if (!user.isHidden()) ownerBundle.add(packetBuilder.buildEntityEquipmentSlotUpdatePacket(getFirstArmorStandId(), Map.of(EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()))));
         }
-        HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
-        HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
+        outsideBundle.add(packetBuilder.buildEntityEquipmentSlotUpdatePacket(getFirstArmorStandId(), Map.of(EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType))));
+        outsideBundle.add(packetBuilder.buildEntityMountPacket(entity.getEntityId(), passengerIDs));
+
+        NMSHandlers.getHandler().getPacketSender().sendBundle(ownerBundle, user.getPlayer());
+        NMSHandlers.getHandler().getPacketSender().sendBundle(outsideBundle, outsideViewers);
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }

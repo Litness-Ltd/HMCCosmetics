@@ -93,30 +93,29 @@ public class HMCCPacketManager {
         NMSHandlers.getHandler().getPacketSender().sendBundle(packets, sendTo);
     }
 
-    public static void spawnCloudAndHandleEffect(
+    public static List<PacketWrapper> getCloudHandleEffect(
             int entityId,
             Location location,
-            UUID uuid,
-            List<Player> sendTo
+            UUID uuid
     ) {
         NMSPacketBuilder packetBuilder = NMSHandlers.getHandler().getPacketBuilder();
         List<PacketWrapper> packets = new ArrayList<>();
         packets.add(packetBuilder.buildEntitySpawnPacket(entityId, uuid, EntityType.AREA_EFFECT_CLOUD, location));
         packets.add(packetBuilder.buildEntityMetadataPacket(entityId, CLOUD_EFFECT_INVISIBLE_DATA_VALUES));
-        NMSHandlers.getHandler().getPacketSender().sendBundle(packets, sendTo);
+        return packets;
     }
 
-    public static void spawnInvisibleArmorstand(
+    public static List<PacketWrapper> getInvisibleArmorStand(
             int entityId,
             Location location,
-            UUID uuid,
-            List<Player> sendTo
+            UUID uuid
     ) {
         NMSPacketBuilder packetBuilder = NMSHandlers.getHandler().getPacketBuilder();
         List<PacketWrapper> packets = new ArrayList<>();
         packets.add(packetBuilder.buildEntitySpawnPacket(entityId, uuid, EntityType.ARMOR_STAND, location));
         packets.add(packetBuilder.buildEntityMetadataPacket(entityId, getInvisibleArmorStandData()));
-        NMSHandlers.getHandler().getPacketSender().sendBundle(packets, sendTo);
+        return packets;
+        //NMSHandlers.getHandler().getPacketSender().sendBundle(packets, sendTo);
     }
 
     /**
