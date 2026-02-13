@@ -102,18 +102,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // Move this over to Hibiscus Commons later
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new HMCPlaceholderExpansion().register();
 
-        // HMCColor
-        try {
-            if (Settings.isPreferHMCColorDyeMenu() && Hooks.isActiveHook("HMCColor")) {
-                DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
-            } else {
-                DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu());
-            }
-            // Reload method called in setup, do not need to call it here as all we do is set the provider.
-        } catch (IllegalStateException e) {
-            getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
-        }
-
         // Setup
         setup();
         setPacketInterface(new CosmeticPacketInterface());
@@ -137,6 +125,18 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         }
         // Database
         new Database();
+
+        // HMCColor
+        try {
+            if (Settings.isPreferHMCColorDyeMenu() && Hooks.isActiveHook("HMCColor")) {
+                DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
+            } else {
+                DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu());
+            }
+            // Reload method called in setup, do not need to call it here as all we do is set the provider.
+        } catch (IllegalStateException e) {
+            getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
+        }
 
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
