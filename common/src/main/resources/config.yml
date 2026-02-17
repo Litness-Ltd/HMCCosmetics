@@ -184,9 +184,9 @@ wardrobe:
     color: BLUE
   transition:
     enabled: true
-    # If you use ItemsAdder, set this to "<black>%img_title%
+    # If you use ItemsAdder, set this to "<black>%img_hmcc_title%
     # If you use Oraxen, set this to "<black><glyph:title>"
-    # If you use Nexo, set this to "<black>%nexo_title%" and use PlaceholderAPI
+    # If you use Nexo, set this to "<black><glyph:hmcc_title:colorable>" (alternatively, you can use PlaceholderAPI and put: "<black>%nexo_hmcc_title%" )
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds
