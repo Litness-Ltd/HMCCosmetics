@@ -215,7 +215,7 @@ public class WardrobeSettings {
             Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, defaultMenu, file);
             addWardrobe(wardrobe);
         } catch (Exception e) {
-            MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
+            throw new RuntimeException("Unable to load wardrobe " + id, e);
         }
     }
 
