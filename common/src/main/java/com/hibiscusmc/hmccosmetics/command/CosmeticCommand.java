@@ -371,12 +371,12 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
                     return true;
                 }
-                Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
+                String wardrobeId = args[1];
+                Wardrobe wardrobe = WardrobeSettings.getWardrobe(wardrobeId);
                 if (wardrobe == null) {
-                    //wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1, null);
-                    //WardrobeSettings.addWardrobe(wardrobe);
-                    MessagesUtil.sendMessage(player, "no-wardrobes");
-                    return true;
+                    wardrobe = new Wardrobe(wardrobeId, new WardrobeLocation(null, null, null), null, -1, null, WardrobeSettings.getWardrobeDefaultFile());
+                    WardrobeSettings.addWardrobe(wardrobe);
+                    //MessagesUtil.sendMessage(player, "no-wardrobes");
                 }
 
                 if (args[2].equalsIgnoreCase("npclocation")) {
