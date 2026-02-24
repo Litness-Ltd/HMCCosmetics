@@ -11,6 +11,7 @@ import dev.triumphteam.gui.builder.gui.ChestGuiBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.ColorBuilder;
 import me.lojosho.hibiscuscommons.util.MessagesUtil;
@@ -122,7 +123,7 @@ public class InternalDyeMenu implements DyeMenu {
 
     @Override
     public void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic) {
-        Gui gui = new ChestGuiBuilder().rows(FORMAT.size()).title(MiniMessage.miniMessage().deserialize(Settings.getDyeMenuName())).create();
+        Gui gui = new ChestGuiBuilder().rows(FORMAT.size()).title(MiniMessage.miniMessage().deserialize(Hooks.processPlaceholders(viewer, Settings.getDyeMenuName()))).create();
         gui.setUpdating(true);
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
