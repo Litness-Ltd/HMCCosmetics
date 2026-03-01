@@ -141,14 +141,14 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.11")
 
         downloadPlugins {
-            hangar("PlaceholderAPI", "2.11.6")
+            hangar("PlaceholderAPI", "2.12.2")
             hangar("Multiverse-Core", "5.3.4")
-            url("https://download.luckperms.net/1614/bukkit/loader/LuckPerms-Bukkit-5.5.26.jar")
+            url("https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar")
             github("Test-Account666", "PlugManX", "2.4.1", "PlugManX-2.4.1.jar")
-            github("gecolay", "GSit", "3.1.1", "GSit-3.1.1.jar")
+            github("gecolay", "GSit", "3.2.1", "GSit-3.2.1.jar")
         }
     }
 
