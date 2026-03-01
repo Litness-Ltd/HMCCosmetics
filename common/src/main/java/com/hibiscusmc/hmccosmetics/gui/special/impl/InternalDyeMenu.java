@@ -5,7 +5,6 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
-import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import dev.triumphteam.gui.builder.gui.ChestGuiBuilder;
 import dev.triumphteam.gui.guis.Gui;
@@ -123,7 +122,13 @@ public class InternalDyeMenu implements DyeMenu {
 
     @Override
     public void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic) {
-        Gui gui = new ChestGuiBuilder().rows(FORMAT.size()).title(MiniMessage.miniMessage().deserialize(Hooks.processPlaceholders(viewer, Settings.getDyeMenuName()))).create();
+        if (ROWS == 0 || ROWS >= 7) {
+            MessagesUtil.sendDebugMessages("Internal Dye Menu formatting is not returning the correct amount of rows (Rows found: " + ROWS + "). Check your internal dye menu config.", Level.WARNING);
+            cosmeticHolder.addCosmetic(cosmetic);
+            return;
+        }
+
+        Gui gui = new ChestGuiBuilder().rows(ROWS).title(MiniMessage.miniMessage().deserialize(Hooks.processPlaceholders(viewer, Settings.getDyeMenuName()))).create();
         gui.setUpdating(true);
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
