@@ -154,6 +154,9 @@ hook-settings:
   hmccolor:
     # If HMCColor is available, prefer hmccolor dye menu rather than the internal menu. Requires a restart.
     prefer-hmccolor-menu: false
+  vulcan:
+    # Will ignore any violations in Vulcan if a player is within a wardrobe
+    exempt-checks-in-wardrobe: false
 wardrobe:
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3

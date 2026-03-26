@@ -74,6 +74,8 @@ public class Settings {
     private static final String HOOK_HMCCOLOR_PATH = "hmccolor";
     private static final String HMCCOLOR_PREFER_DYE_MENU = "prefer-hmccolor-menu";
     private static final String PLAYER_SEARCH_IMPLEMENTATION = "player-search-implmentation";
+    private static final String VULCAN_HOOK_PATH = "vulcan";
+    private static final String VULCAN_IGNORE_CHECKS_IN_WARDROBE_PATH = "exempt-checks-in-wardrobe";
 
     @Getter
     private static String defaultMenu;
@@ -163,10 +165,11 @@ public class Settings {
     @Getter
     private static boolean wardrobeHideHud;
     @Getter
+    private static boolean vulcanIgnoreViolationInWardrobe;
+    @Getter
     private static boolean dyeMenuEnabled;
     @Getter
     private static PlayerSearchManager.SearchEngine engine;
-
 
     public static void load(ConfigurationNode source) {
 
@@ -271,6 +274,9 @@ public class Settings {
 
         ConfigurationNode hmccolorSettings = hookSettings.node(HOOK_HMCCOLOR_PATH);
         preferHMCColorDyeMenu = hmccolorSettings.node(HMCCOLOR_PREFER_DYE_MENU).getBoolean(false);
+
+        ConfigurationNode vulcanSettings = hookSettings.node(VULCAN_HOOK_PATH);
+        vulcanIgnoreViolationInWardrobe = vulcanSettings.node(VULCAN_IGNORE_CHECKS_IN_WARDROBE_PATH).getBoolean(false);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);
