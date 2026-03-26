@@ -280,11 +280,6 @@ public class Settings {
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);
-        // I messed up in release 2.2.6 and forgot to change player_move_check to player-move-check.
-        if (!worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH_LEGACY).virtual()) {
-            MessagesUtil.sendDebugMessages("There is a deprecated way of using WG hook setting. Change player_move_check to player-move-check in your configuration to prevent issues in the future. ", Level.WARNING);
-            worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH_LEGACY).getBoolean(true);
-        }
     }
 
     public static Vector loadVector(final ConfigurationNode config) {
