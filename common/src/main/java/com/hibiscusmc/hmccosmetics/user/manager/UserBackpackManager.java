@@ -33,8 +33,8 @@ public class UserBackpackManager {
     private ArrayList<Integer> particleCloud = new ArrayList<>();
     @Getter
     private final CosmeticUser user;
-    @Getter @Nullable
-    private UserEntity entityManager;
+    @Getter
+    private final UserEntity entityManager;
 
     public UserBackpackManager(CosmeticUser user) {
         this.user = user;
@@ -110,6 +110,11 @@ public class UserBackpackManager {
     }
 
     public void despawnBackpack() {
+        int[] existingPassengers = user.getEntity().getPassengers().stream()
+                .mapToInt(Entity::getEntityId)
+                .toArray();
+        if (existingPassengers.length > 0) HMCCPacketManager.sendRidingPacket(user.getEntity().getEntityId(), existingPassengers, getEntityManager().getViewers());
+
         HMCCPacketManager.sendEntityDestroyPacket(invisibleArmorStand, getEntityManager().getViewers());
         if (particleCloud != null) {
             for (Integer entityId : particleCloud) {
