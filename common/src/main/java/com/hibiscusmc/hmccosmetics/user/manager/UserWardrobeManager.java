@@ -135,8 +135,8 @@ public class UserWardrobeManager {
 
             // NPC
             npcName = "WardrobeNPC-" + NPC_ID;
-            while (npcName.length() > 16) {
-                npcName = npcName.substring(16);
+            if (npcName.length() >= 16) {
+                npcName = npcName.substring(0, 15);
             }
             viewerPackets.add(packetBuilder.buildPlayerInfoAddPacket(player, NPC_ID, WARDROBE_UUID, npcName));
             viewerPackets.add(packetBuilder.buildEntitySpawnPacket(NPC_ID, WARDROBE_UUID, EntityType.PLAYER, npcLocation));
