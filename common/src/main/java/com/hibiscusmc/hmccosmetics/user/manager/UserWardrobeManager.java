@@ -134,7 +134,7 @@ public class UserWardrobeManager {
             viewerPackets.add(packetBuilder.buildEntityCameraPacket(ARMORSTAND_ID));
 
             // NPC
-            npcName = "WardrobeNPC-" + NPC_ID;
+            npcName = "Mannequin";
             if (npcName.length() >= 16) {
                 npcName = npcName.substring(0, 15);
             }
