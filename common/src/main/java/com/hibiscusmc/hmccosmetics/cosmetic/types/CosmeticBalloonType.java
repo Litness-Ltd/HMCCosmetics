@@ -76,6 +76,7 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
             List<Player> sendTo = userBalloonManager.getPufferfish().refreshViewers(newLocation);
             if (sendTo.isEmpty()) return;
             user.getBalloonManager().getPufferfish().spawnPufferfish(newLocation, sendTo);
+            HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), sendTo);
         }
     }
 
@@ -96,11 +97,11 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         newLocation = newLocation.clone().add(getBalloonOffset());
         if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
 
-        List<Player> viewer = HMCCPacketManager.getViewers(entity.getLocation());
+        List<Player> viewers = HMCCPacketManager.getViewers(entity.getLocation());
 
         if (entity.getLocation().getWorld() != userBalloonManager.getLocation().getWorld()) {
             userBalloonManager.getModelEntity().teleport(newLocation);
-            HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
+            HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
             return;
         }
 
@@ -113,8 +114,8 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         MessagesUtil.sendDebugMessages("Balloon location set to " + newLocation);
         MessagesUtil.sendDebugMessages("Balloon velocity set to " + velocity);
 
-        HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
-        HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);
+        HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
+        HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewers);
     }
 
     public boolean isDyeablePart(String name) {
