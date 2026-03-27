@@ -43,6 +43,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
 
     @Override
     public void dispatchUpdate(@NotNull CosmeticUser user) {
+        if (user.isInWardrobe()) return;
+
         Entity entity = user.getEntity();
         if(entity == null) {
             return;
