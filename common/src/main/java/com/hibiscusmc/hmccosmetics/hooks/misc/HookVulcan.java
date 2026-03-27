@@ -22,7 +22,7 @@ public class HookVulcan extends Hook {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerEnterWardrobe(PlayerWardrobeEnterEvent event) {
-        if (Settings.isVulcanIgnoreViolationInWardrobe()) return;
+        if (!Settings.isVulcanIgnoreViolationInWardrobe()) return;
 
         EXEMPT.add(event.getUser().getUniqueId());
     }
@@ -34,7 +34,7 @@ public class HookVulcan extends Hook {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onCheck(VulcanFlagEvent event) {
-        if (Settings.isVulcanIgnoreViolationInWardrobe()) return;
+        if (!Settings.isVulcanIgnoreViolationInWardrobe()) return;
 
         if (!EXEMPT.contains(event.getPlayer().getUniqueId())) return;
         event.setCancelled(true);
