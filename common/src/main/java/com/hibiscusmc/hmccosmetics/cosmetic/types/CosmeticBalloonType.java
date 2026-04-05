@@ -35,7 +35,7 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         super(id, config);
 
         String modelId = config.node("model").getString();
-        showLead = config.node("show-lead").getBoolean(true);
+        showLead = config.node("show-lead").getBoolean(Settings.isBalloonDefaultShowLead());
 
         ConfigurationNode balloonOffsetNode = config.node("balloon-offset");
         if (balloonOffsetNode.virtual())

@@ -49,6 +49,7 @@ public class Settings {
     private static final String COSMETIC_BACKPACK_INTERCEPT_PASSENGER_PACKET_PATH = "backpack-intercept-passenger-packets";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
     private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
+    private static final String COSMETIC_BALLOON_DEFAULT_SHOW_LEAD_PATH = "balloon-lead-default";
     private static final String COSMETIC_OFFHAND_PREVENT_SWAPPING = "offhand-prevent-swapping";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
     private static final String MENU_CLICK_COOLDOWN_PATH = "click-cooldown";
@@ -118,6 +119,8 @@ public class Settings {
     private static boolean disabledGamemodesEnabled;
     @Getter
     private static boolean balloonHeadForward;
+    @Getter
+    private static boolean balloonDefaultShowLead;
     @Getter
     private static boolean backpackPreventDarkness;
     @Getter
@@ -227,6 +230,7 @@ public class Settings {
         engine = PlayerSearchManager.SearchEngine.valueOf(cosmeticSettings.node(PLAYER_SEARCH_IMPLEMENTATION).getString("BUKKIT").toUpperCase());
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        balloonDefaultShowLead = cosmeticSettings.node(COSMETIC_BALLOON_DEFAULT_SHOW_LEAD_PATH).getBoolean(true);
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
