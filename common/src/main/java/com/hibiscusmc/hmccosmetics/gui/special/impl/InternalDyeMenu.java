@@ -42,7 +42,6 @@ public class InternalDyeMenu implements DyeMenu {
 
     private List<String> FORMAT = List.of();
     private int ROWS;
-    private String FORMAT_STRING;
     private final ArrayList<Integer> PRIMARY_COLORS_SLOTS = new ArrayList<>();
     private final ArrayList<Integer> SECONDARY_COLORS_SLOTS = new ArrayList<>();
 
@@ -78,9 +77,12 @@ public class InternalDyeMenu implements DyeMenu {
         for (String row : FORMAT) {
             builder.append(row);
         }
-        FORMAT_STRING = builder.toString();
+        final String formatString = builder.toString();
+
+        PRIMARY_COLORS_SLOTS.clear();
+        SECONDARY_COLORS_SLOTS.clear();
         for (int i = 0; i < (ROWS * 9) - 1; i++) {
-            char character = FORMAT_STRING.charAt(i);
+            char character = formatString.charAt(i);
             switch (character) {
                 case '$' -> {
                     PRIMARY_COLORS_SLOTS.add(i);
