@@ -8,6 +8,8 @@ import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
+import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -56,13 +58,16 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
         if (Settings.getSlotOption(equipSlot).isAddEnchantments()) {
             cosmeticItem.addUnsafeEnchantments(physicalEquippedItem.getEnchantments());
         }
+
+        if (!NMSHandlers.getVersion().isHigherOrEqual(MinecraftVersion.v1_21_4)) return cosmeticItem;
+        // Past this point, we know the server is over 1.21.4
         if (Settings.getSlotOption(equipSlot).isAddElytraComponent()
                 && HibiscusCommonsPlugin.isOnPaper()
                 && physicalEquippedItem.hasData(DataComponentTypes.GLIDER)) {
             cosmeticItem.setData(DataComponentTypes.GLIDER);
         }
         if (Settings.getSlotOption(equipSlot).isItemDamagePassThrough()
-        && HibiscusCommonsPlugin.isOnPaper()) {
+                && HibiscusCommonsPlugin.isOnPaper()) {
             if (physicalEquippedItem.hasData(DataComponentTypes.MAX_DAMAGE))
                 cosmeticItem.setData(DataComponentTypes.MAX_DAMAGE, physicalEquippedItem.getData(DataComponentTypes.MAX_DAMAGE));
             if (physicalEquippedItem.hasData(DataComponentTypes.DAMAGE))
