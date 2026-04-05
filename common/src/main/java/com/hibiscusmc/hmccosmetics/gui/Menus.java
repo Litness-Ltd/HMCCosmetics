@@ -7,6 +7,7 @@ import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import org.apache.commons.io.FilenameUtils;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,11 +89,11 @@ public class Menus {
         MENUS.clear();
         COOLDOWNS.clear();
 
-        File cosmeticFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus");
-        if (!cosmeticFolder.exists()) cosmeticFolder.mkdir();
+        File menusFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus");
+        if (!menusFolder.exists()) menusFolder.mkdir();
 
         // Recursive file lookup
-        try (Stream<Path> walkStream = Files.walk(cosmeticFolder.toPath())) {
+        try (Stream<Path> walkStream = Files.walk(menusFolder.toPath())) {
             walkStream.filter(p -> p.toFile().isFile()).forEach(child -> {
                 if (child.toString().endsWith("yml") || child.toString().endsWith("yaml")) {
                     if (FILES_TO_IGNORE.contains(child.getFileName().toString())) return;
@@ -115,6 +116,17 @@ public class Menus {
             });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        refreshPermissions();
+    }
+
+    public static void refreshPermissions() {
+        final HMCCosmeticsPlugin instance = HMCCosmeticsPlugin.getInstance();
+        for (Menu menu : Menus.values()) {
+            if (menu.getPermissionNode() == null) continue;
+            if (instance.getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
+            instance.getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
         }
     }
 }

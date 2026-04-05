@@ -251,18 +251,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             user.updateCosmetic();
         }
          */
-        for (Cosmetic cosmetic : Cosmetics.values()) {
-            if (cosmetic.getPermission() != null) {
-                if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
-                getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
-            }
-        }
-        for (Menu menu : Menus.values()) {
-            if (menu.getPermissionNode() != null) {
-                if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
-                getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
-            }
-        }
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
