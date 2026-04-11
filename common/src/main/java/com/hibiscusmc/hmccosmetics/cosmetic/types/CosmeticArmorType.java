@@ -59,7 +59,7 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
             cosmeticItem.addUnsafeEnchantments(physicalEquippedItem.getEnchantments());
         }
 
-        if (!NMSHandlers.getVersion().isHigherOrEqual(MinecraftVersion.v1_21_4)) return cosmeticItem;
+        if (NMSHandlers.getVersion().isLower(MinecraftVersion.v1_21_4)) return cosmeticItem;
         // Past this point, we know the server is over 1.21.4
         if (Settings.getSlotOption(equipSlot).isAddElytraComponent()
                 && HibiscusCommonsPlugin.isOnPaper()
