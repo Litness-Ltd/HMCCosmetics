@@ -52,9 +52,6 @@ allprojects {
         // ParticleHelper
         maven("https://repo.bytecode.space/repository/maven-public/")
 
-        // PlayerAnimator
-        maven("https://mvn.lumine.io/repository/maven/")
-
         // md-5 Repo
         maven("https://repo.md-5.net/content/groups/public/")
 
@@ -74,7 +71,6 @@ allprojects {
     dependencies {
         compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
-        //compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
         compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:24.1.0")
         compileOnly("me.clip:placeholderapi:2.11.6")
@@ -93,13 +89,6 @@ allprojects {
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
         compileOnly("me.lojosho:HibiscusCommons:0.8.3-a89bcec3")
-
-        // Handled by Spigot Library Loader ~ Deprecated as of Dec 16, 2025
-        /*
-        compileOnly("net.kyori:adventure-api:4.24.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.24.0")
-        compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
-         */
 
         annotationProcessor("org.projectlombok:lombok:1.18.36")
         testCompileOnly("org.projectlombok:lombok:1.18.36")
@@ -157,7 +146,6 @@ tasks {
 
         relocate("dev.triumphteam.gui", "com.hibiscusmc.hmccosmetics.shaded.gui")
         relocate("com.owen1212055.particlehelper", "com.hibiscusmc.hmccosmetics.shaded.particlehelper")
-        relocate("com.ticxo.playeranimator", "com.hibiscusmc.hmccosmetics.shaded.playeranimator")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
