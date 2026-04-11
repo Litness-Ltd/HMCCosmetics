@@ -49,9 +49,6 @@ allprojects {
             }
         }
 
-        // ParticleHelper
-        maven("https://repo.bytecode.space/repository/maven-public/")
-
         // md-5 Repo
         maven("https://repo.md-5.net/content/groups/public/")
 
@@ -97,7 +94,6 @@ allprojects {
         implementation("dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT") {
             exclude("net.kyori") // Already have adventure API
         }
-        implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     }
 
     tasks {
