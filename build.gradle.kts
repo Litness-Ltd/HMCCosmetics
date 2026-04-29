@@ -171,14 +171,11 @@ bukkit {
     depend = listOf("HibiscusCommons")
     softDepend = listOf("Nexo", "BetterHud", "ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
     version = "${project.version}"
-    loadBefore = listOf(
-        "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
-    )
 
     commands {
-        register("cosmetic") {
+        register("hmccosmetics") {
             description = "Base Cosmetic Command"
-            aliases = listOf("hmccosmetics", "cosmetics")
+            aliases = listOf("cosmetic", "cosmetics")
         }
     }
     permissions {

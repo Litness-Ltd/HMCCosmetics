@@ -42,6 +42,7 @@ import me.lojosho.shaded.configurate.yaml.NodeStyle;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -112,8 +113,13 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         this.playerSearchManager = new PlayerSearchManager(Settings.getEngine(), this);
 
         // Commands
-        getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
-        getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+        PluginCommand cosmeticCommand = getServer().getPluginCommand("hmccosmetics");
+        if (cosmeticCommand != null) {
+            cosmeticCommand.setExecutor(new CosmeticCommand());
+            cosmeticCommand.setTabCompleter(new CosmeticCommandTabComplete());
+        } else {
+            getLogger().severe("Unable to register commands! (Is another plugin interfering with HMCCosmetics commands?)");
+        }
 
         // Listener
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
