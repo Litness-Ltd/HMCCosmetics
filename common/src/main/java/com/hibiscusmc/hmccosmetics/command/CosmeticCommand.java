@@ -476,6 +476,32 @@ public class CosmeticCommand implements CommandExecutor {
                 user.showCosmetics(CosmeticUser.HiddenReason.COMMAND);
                 return true;
             }
+            case ("toggle") -> {
+                if (sender instanceof Player) player = ((Player) sender).getPlayer();
+                if (sender.hasPermission("hmccosmetics.cmd.toggle.other")) {
+                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                }
+
+                if (!sender.hasPermission("hmccosmetics.cmd.toggle")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+
+                if (player == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (user.isHidden(CosmeticUser.HiddenReason.COMMAND)) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "show-cosmetic");
+                    user.showCosmetics(CosmeticUser.HiddenReason.COMMAND);
+                } else {
+                    if (!silent) MessagesUtil.sendMessage(sender, "hide-cosmetic");
+                    user.hideCosmetics(CosmeticUser.HiddenReason.COMMAND);
+                }
+                return true;
+            }
             case ("debug") -> {
                 if (!sender.hasPermission("hmccosmetics.cmd.debug")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
