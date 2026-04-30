@@ -233,10 +233,16 @@ bukkit {
         register("hmccosmetics.cmd.show") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("hmccosmetics.cmd.toggle") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
         register("hmccosmetics.cmd.hide.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.show.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.toggle.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.wardrobe.other") {
