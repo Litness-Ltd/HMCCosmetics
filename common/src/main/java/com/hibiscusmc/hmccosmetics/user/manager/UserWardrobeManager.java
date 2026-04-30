@@ -37,6 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 public class UserWardrobeManager {
 
@@ -90,8 +91,22 @@ public class UserWardrobeManager {
         this.npcLocation = wardrobeLocation.getNpcLocation();
 
         String defaultMenu = wardrobe.getDefaultMenu();
-        if (defaultMenu != null && Menus.hasMenu(defaultMenu)) this.lastOpenMenu = Menus.getMenu(defaultMenu);
-        else this.lastOpenMenu = Menus.getDefaultMenu();
+        if (defaultMenu != null) {
+            // User has defined a custom menu in the wardrobe config
+            Menu menu = Menus.getMenu(defaultMenu);
+            if (menu != null) {
+                // User provided a good, valid menu
+                this.lastOpenMenu = Menus.getMenu(defaultMenu);
+            } else {
+                // User provided a menu that does not exist in HMCC
+                this.lastOpenMenu = Menus.getDefaultMenu();
+                MessagesUtil.sendDebugMessages("Unable to set menu (" + defaultMenu + ") in wardrobe " + getWardrobe().getId() + ". Defaulting to default menu defined in config.yml", Level.WARNING);
+                if (this.lastOpenMenu == null) {
+                    // That means that even the default menu is null in the config.
+                    MessagesUtil.sendDebugMessages("Unable to set any menu in wardrobe " + getWardrobe().getId() + " as the fallback default menu (defined in config.yml) is invalid.", Level.WARNING);
+                }
+            }
+        }
 
         wardrobeStatus = WardrobeStatus.SETUP;
     }
