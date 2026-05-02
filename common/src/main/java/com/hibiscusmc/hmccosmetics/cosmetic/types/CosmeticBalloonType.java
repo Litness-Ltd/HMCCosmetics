@@ -105,14 +105,12 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
             return;
         }
 
-        Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
+        //Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
         userBalloonManager.setLocation(newLocation);
-        userBalloonManager.setVelocity(velocity.multiply(1.1));
 
         MessagesUtil.sendDebugMessages("Balloon Cosmetic Update for " + user.getEntity().getName());
         MessagesUtil.sendDebugMessages("Ballon previous location is " + currentLocation);
         MessagesUtil.sendDebugMessages("Balloon location set to " + newLocation);
-        MessagesUtil.sendDebugMessages("Balloon velocity set to " + velocity);
 
         HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
         HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewers);
