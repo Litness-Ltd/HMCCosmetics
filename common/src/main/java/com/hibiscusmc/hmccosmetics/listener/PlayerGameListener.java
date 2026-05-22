@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
@@ -30,6 +31,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +167,8 @@ public class PlayerGameListener implements Listener {
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         Pose pose = event.getPose();
         if (pose.equals(Pose.STANDING)) {
-            // #84, Riptides mess with backpacks
+            user.setHidingBackpackPose(false);
+            // #84, #214 Riptides mess with backpacks
             ItemStack currentItem = player.getInventory().getItemInMainHand();
             if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) return;
             if (!user.isBackpackSpawned()) {
@@ -175,6 +178,7 @@ public class PlayerGameListener implements Listener {
         }
         if (pose.equals(Pose.SLEEPING) || pose.equals(Pose.SWIMMING) || pose.equals(Pose.FALL_FLYING) || pose.equals(Pose.SPIN_ATTACK)) {
             user.despawnBackpack();
+            user.setHidingBackpackPose(true);
         }
     }
 
@@ -263,13 +267,25 @@ public class PlayerGameListener implements Listener {
             }, 2);
         }
 
-        // #84, Riptides mess with backpacks
-        ItemStack currentItem = event.getPlayer().getInventory().getItem(event.getNewSlot());
-        if (currentItem == null) return;
-        if (!currentItem.hasItemMeta()) return;
-        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
-            user.despawnBackpack();
+        // #84, #214 Riptides mess with backpacks, additional logic to reapply cosmetic backpack
+        final ItemStack currentItem = event.getPlayer().getInventory().getItem(event.getNewSlot());
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            if (isItemHasRiptide(currentItem)) {
+                user.despawnBackpack();
+            } else {
+                if (user.isHidingBackpackPose()) return;
+                if (!user.isBackpackSpawned()) {
+                    final Cosmetic cosmetic = user.getCosmetic(CosmeticSlot.BACKPACK);
+                    user.spawnBackpack((CosmeticBackpackType) cosmetic);
+                }
+            }
         }
+    }
+
+    private boolean isItemHasRiptide(@Nullable ItemStack item) {
+        if (item == null) return false;
+        if (!item.hasItemMeta()) return false;
+        return item.containsEnchantment(Enchantment.RIPTIDE);
     }
 
     @EventHandler(priority = EventPriority.LOW)

@@ -24,6 +24,7 @@ import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.InventoryUtils;
@@ -41,6 +42,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,6 +62,10 @@ public class CosmeticUser implements CosmeticHolder {
     // Cosmetic Settings/Toggles
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
+
+    @Getter @Setter
+    @ApiStatus.Internal
+    private boolean hidingBackpackPose = false; // This is so dumb, but I need to know if a user has their backpack hidden because of their pose. See #214. Probably move over to a better system in the future.
 
     /**
      * Use {@link #CosmeticUser(UUID)} instead and use {@link #initialize(UserData)} to populate the user with data.
