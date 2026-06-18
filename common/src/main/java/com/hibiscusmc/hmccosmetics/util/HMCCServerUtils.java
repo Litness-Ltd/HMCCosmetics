@@ -2,10 +2,7 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +27,8 @@ public class HMCCServerUtils {
         };
     }
 
-    public static org.bukkit.entity.Entity getEntity(int entityId) {
-        return NMSHandlers.getHandler().getUtilHandler().getEntity(entityId);
+    public static org.bukkit.entity.Entity getEntity(int entityId, World world) {
+        return NMSHandlers.getHandler().getUtilHandler().getEntity(entityId, world);
     }
 
     /**

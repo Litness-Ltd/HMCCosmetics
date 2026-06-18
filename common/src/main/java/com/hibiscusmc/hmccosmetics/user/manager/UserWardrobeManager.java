@@ -22,10 +22,7 @@ import me.lojosho.hibiscuscommons.nms.NMSPacketSender;
 import me.lojosho.hibiscuscommons.packets.wrapper.PacketWrapper;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
@@ -78,8 +75,9 @@ public class UserWardrobeManager {
     private NMSPacketSender packetSender = NMSHandlers.getHandler().getPacketSender();
 
     public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
-        NPC_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId();
-        ARMORSTAND_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId();
+        World world = user.getEntity().getWorld();
+        NPC_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId(world);
+        ARMORSTAND_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId(world);
         WARDROBE_UUID = UUID.randomUUID();
         this.user = user;
 
