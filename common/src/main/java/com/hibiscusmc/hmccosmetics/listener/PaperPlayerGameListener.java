@@ -1,22 +1,30 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
-import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class PaperPlayerGameListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerArmorEquip(PlayerArmorChangeEvent event) {
-        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
-        if (user == null) return;
-        if (user.isInWardrobe()) return;
-        user.updateCosmetic(slotTypeToCosmeticType(event.getSlotType()));
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEquipmentChange(EntityEquipmentChangedEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        if (user == null || user.isInWardrobe()) return;
+
+        for (EquipmentSlot slot : event.getEquipmentChanges().keySet())
+            user.updateCosmetic(equipmentSlotToCosmeticType(slot));
+
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), player::updateInventory, 2);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -27,8 +35,8 @@ public class PaperPlayerGameListener implements Listener {
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) user.respawnBackpack();
     }
 
-    private CosmeticSlot slotTypeToCosmeticType(PlayerArmorChangeEvent.SlotType slotType) {
-        return switch (slotType) {
+    private CosmeticSlot equipmentSlotToCosmeticType(EquipmentSlot equipmentSlot) {
+        return switch (equipmentSlot) {
             case HEAD -> CosmeticSlot.HELMET;
             case FEET -> CosmeticSlot.BOOTS;
             case LEGS -> CosmeticSlot.LEGGINGS;
