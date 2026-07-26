@@ -225,4 +225,19 @@ public class CosmeticPacketInterface implements PacketInterface {
         if (user == null || !user.isInWardrobe()) return PacketAction.NOTHING;
         else return PacketAction.CANCELLED;
     }
+
+    @Override
+    public @NotNull PacketAction readPlayerInput(@NotNull Player player, @NotNull PlayerInputWrapper wrapper) {
+        // Spectator clients (used by the wardrobe) never send a swing packet on left-click,
+        // so the menu is reopened via the jump key instead.
+        if (!wrapper.jump()) return PacketAction.NOTHING;
+
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        if (user == null || !user.isInWardrobe() || !user.getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return PacketAction.NOTHING;
+
+        Menu menu = user.getWardrobeManager().getLastOpenMenu();
+        if (menu == null) return PacketAction.NOTHING;
+        menu.openMenu(user);
+        return PacketAction.NOTHING;
+    }
 }
