@@ -15,7 +15,8 @@ import java.util.logging.Level;
 
 public class SQLiteData extends SQLData {
 
-    private Connection connection;
+    // Volatile: written by whichever thread reconnects, read by every async get/save/clear task.
+    private volatile Connection connection;
 
     @Override
     public void setup() {
@@ -57,16 +58,29 @@ public class SQLiteData extends SQLData {
         });
     }
 
-    private void openConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) return;
+    // Synchronized so two async tasks that both find the connection stale don't open (and leak) two
+    // replacements.
+    private synchronized void openConnection() throws SQLException {
+        if (isConnectionOpen(connection)) return;
 
-        // Close Connection if still active
+        // Discard whatever stale handle we were holding before replacing it, so a connection that
+        // failed validation is not simply leaked.
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                MessagesUtil.sendDebugMessages("Failed to close the previous SQLite connection: " + e.getMessage(), Level.WARNING);
+            }
+            connection = null;
+            connectionChanged();
+        }
+
         File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
 
-        // Connect to database host
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+            connectionChanged();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -77,7 +91,7 @@ public class SQLiteData extends SQLData {
         PreparedStatement ps = null;
 
         try {
-            if (!isConnectionOpen()) {
+            if (!isConnectionOpen(connection)) {
                 MessagesUtil.sendDebugMessages("Connection is not open");
                 openConnection();
             }
@@ -87,13 +101,5 @@ public class SQLiteData extends SQLData {
         }
 
         return ps;
-    }
-
-    private boolean isConnectionOpen() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

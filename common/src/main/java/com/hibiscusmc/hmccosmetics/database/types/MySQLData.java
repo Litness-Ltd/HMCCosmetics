@@ -24,8 +24,9 @@ public class MySQLData extends SQLData {
     private String password;
     private int port;
 
+    // Volatile: written by whichever thread reconnects, read by every async get/save/clear task.
     @Nullable
-    private Connection connection;
+    private volatile Connection connection;
 
     @Override
     public void setup() {
@@ -71,33 +72,48 @@ public class MySQLData extends SQLData {
         });
     }
 
-    private void openConnection() throws SQLException {
-        // Connection isn't null AND Connection isn't closed :: return
+    // Synchronized so two async tasks that both find the connection stale don't open (and leak) two
+    // replacements.
+    private synchronized void openConnection() throws SQLException {
+        if (isConnectionOpen(connection)) return;
+
+        close(); // Discard whatever stale handle we were holding before replacing it.
+
         try {
-            if (isConnectionOpen()) return;
-            if (connection != null) close(); // Close connection if still active
-        } catch (RuntimeException e) {
-            e.printStackTrace(); // If isConnectionOpen() throws error
+            // Legacy driver class, kept for old Connector/J jars. JDBC 4 auto-registers drivers from
+            // the classpath, so failing to find it must not stop us from connecting.
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ignored) {
+            // Not fatal — see above.
         }
 
-        // Connect to database host
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        // Let a failure propagate: setup() turns it into the "database can not be reached" shutdown,
+        // and preparedStatement() logs it. Swallowing it here only produced a null connection and an
+        // NPE further along, hiding why the connection never came back.
+        connection = DriverManager.getConnection(
+                "jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
+        connectionChanged();
     }
 
     public void close() {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        // Detach the handle before closing it. close() runs off-thread, so reading the field inside
+        // the task would race openConnection()'s reassignment and shut the *fresh* connection down —
+        // leaving the reconnect path permanently closing whatever it had just opened.
+        final Connection stale = this.connection;
+        this.connection = null;
+        connectionChanged();
+        if (stale == null) return;
+
+        Runnable close = () -> {
             try {
-                if (connection == null) throw new IllegalStateException("Connection is null");
-                connection.close();
-            } catch (SQLException | NullPointerException e) {
-                System.out.println(e.getMessage());
+                stale.close();
+            } catch (SQLException e) {
+                MessagesUtil.sendDebugMessages("Failed to close the previous MySQL connection: " + e.getMessage(), Level.WARNING);
             }
-        });
+        };
+        // On shutdown the scheduler no longer runs tasks, so close inline instead of dropping it.
+        if (HMCCosmeticsPlugin.getInstance().isDisabled()) close.run();
+        else Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), close);
     }
 
     @NotNull
@@ -108,19 +124,11 @@ public class MySQLData extends SQLData {
         return props;
     }
 
-    private boolean isConnectionOpen() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
 
-        if (!isConnectionOpen()) {
+        if (!isConnectionOpen(connection)) {
             MessagesUtil.sendDebugMessages("The MySQL database connection is not open (Could the database been idle for to long?). Reconnecting...", Level.WARNING);
             try {
                 openConnection();
