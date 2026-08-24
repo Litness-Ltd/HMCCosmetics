@@ -76,8 +76,8 @@ public abstract class SQLData extends Data {
      * @return true if {@code connection} is present and can still be used to run a statement.
      *
      * <p>{@link Connection#isClosed()} alone is not enough: it only reports a {@code close()} we made
-     * ourselves, so a connection dropped server-side — a MySQL {@code wait_timeout} on an idle
-     * server, a restarted database, a killed session — keeps reporting "open" and only reveals itself
+     * ourselves, so a connection dropped server-side - a MySQL {@code wait_timeout} on an idle
+     * server, a restarted database, a killed session - keeps reporting "open" and only reveals itself
      * when a statement fails. {@link Connection#isValid(int)} round-trips to the server and catches
      * that, which is the case the callers' "could the database have been idle for too long?"
      * reconnect exists for.</p>

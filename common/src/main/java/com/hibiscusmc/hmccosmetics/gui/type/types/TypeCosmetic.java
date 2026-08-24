@@ -67,7 +67,7 @@ public class TypeCosmetic extends Type {
 
         // Compare by id, not by identity: Cosmetics.setup() rebuilds every Cosmetic on reload while
         // holders keep the instance they equipped, so an identity check would miss an equipped
-        // cosmetic and fall through to the equip branch — opening the dye menu instead of unequipping.
+        // cosmetic and fall through to the equip branch - opening the dye menu instead of unequipping.
         // This is also what setItem() below uses to decide the item renders as equipped, so the two
         // must agree or the GUI shows an equipped item that refuses to unequip.
         boolean isUnEquippingCosmetic = cosmeticHolder.hasCosmeticInSlot(cosmetic);

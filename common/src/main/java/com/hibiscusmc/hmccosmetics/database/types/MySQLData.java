@@ -84,7 +84,7 @@ public class MySQLData extends SQLData {
             // the classpath, so failing to find it must not stop us from connecting.
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException ignored) {
-            // Not fatal — see above.
+            // Not fatal - see above.
         }
 
         // Let a failure propagate: setup() turns it into the "database can not be reached" shutdown,
@@ -97,7 +97,7 @@ public class MySQLData extends SQLData {
 
     public void close() {
         // Detach the handle before closing it. close() runs off-thread, so reading the field inside
-        // the task would race openConnection()'s reassignment and shut the *fresh* connection down —
+        // the task would race openConnection()'s reassignment and shut the *fresh* connection down -
         // leaving the reconnect path permanently closing whatever it had just opened.
         final Connection stale = this.connection;
         this.connection = null;
