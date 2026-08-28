@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.listener;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -47,7 +48,23 @@ public class PaperPlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         if (user.isInWardrobe()) return;
-        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) user.respawnBackpack();
+
+        // Respawning is not a teleport, so onPlayerTeleport never re-evaluates the world state. Without
+        // this the cosmetics are not re-applied at the respawn point, and a WORLD flag picked up in the
+        // world the player died in stays set forever.
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            if (user.getEntity() == null || user.isInWardrobe()) return;
+
+            if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+            } else {
+                user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
+            }
+
+            user.respawnBackpack();
+            user.respawnBalloon();
+            user.updateCosmetic();
+        }, 4);
     }
 
     private CosmeticSlot equipmentSlotToCosmeticType(EquipmentSlot equipmentSlot) {
