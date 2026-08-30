@@ -125,25 +125,15 @@ public class MySQLData extends SQLData {
     }
 
     @Override
-    public PreparedStatement preparedStatement(String query) {
-        PreparedStatement ps = null;
-
+    public PreparedStatement preparedStatement(String query) throws SQLException {
         if (!isConnectionOpen(connection)) {
             MessagesUtil.sendDebugMessages("The MySQL database connection is not open (Could the database been idle for to long?). Reconnecting...", Level.WARNING);
-            try {
-                openConnection();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            openConnection();
         }
 
-        try {
-            if (connection == null) throw new IllegalStateException("Connection is null");
-            ps = connection.prepareStatement(query);
-        } catch (SQLException | IllegalStateException e) {
-            e.printStackTrace();
-        }
-
-        return ps;
+        // Read the volatile field once: a concurrent close() could null it between the check and the use.
+        final Connection current = this.connection;
+        if (current == null) throw new SQLException("No MySQL connection available after reconnect attempt");
+        return current.prepareStatement(query);
     }
 }

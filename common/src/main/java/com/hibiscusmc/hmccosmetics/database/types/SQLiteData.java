@@ -87,19 +87,15 @@ public class SQLiteData extends SQLData {
     }
 
     @Override
-    public PreparedStatement preparedStatement(String query) {
-        PreparedStatement ps = null;
-
-        try {
-            if (!isConnectionOpen(connection)) {
-                MessagesUtil.sendDebugMessages("Connection is not open");
-                openConnection();
-            }
-            ps = connection.prepareStatement(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public PreparedStatement preparedStatement(String query) throws SQLException {
+        if (!isConnectionOpen(connection)) {
+            MessagesUtil.sendDebugMessages("Connection is not open");
+            openConnection();
         }
 
-        return ps;
+        // Read the volatile field once: a concurrent reconnect could replace it between check and use.
+        final Connection current = this.connection;
+        if (current == null) throw new SQLException("No SQLite connection available after reconnect attempt");
+        return current.prepareStatement(query);
     }
 }

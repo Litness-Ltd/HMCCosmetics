@@ -47,6 +47,11 @@ public class PlayerConnectionListener implements Listener {
 
         Database.get(playerId).thenAccept(userData -> {
             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                // The load runs off-thread, so the player may have quit while it was in flight. Their
+                // quit found no user to unload, so creating one here would leave a ghost user ticking
+                // forever with nothing left to remove it.
+                if (Bukkit.getPlayer(playerId) == null) return;
+
                 CosmeticUser cosmeticUser = CosmeticUsers.getProvider()
                     .createCosmeticUser(playerId)
                     .initialize(userData);

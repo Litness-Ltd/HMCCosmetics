@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public abstract class SQLData extends Data {
 
@@ -62,7 +63,11 @@ public abstract class SQLData extends Data {
                 preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                // Log rather than rethrow: this runs on a scheduler thread, where a thrown exception
+                // is the difference between a named "cosmetics were not saved" line and a stack trace
+                // nobody attributes to a lost save.
+                HMCCosmeticsPlugin.getInstance().getLogger().log(
+                        Level.SEVERE, "Failed to save cosmetics for " + user.getUniqueId(), e);
             }
         };
         if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {
@@ -110,5 +115,9 @@ public abstract class SQLData extends Data {
         this.lastValidatedAt = 0L;
     }
 
-    public abstract PreparedStatement preparedStatement(String query);
+    /**
+     * @throws SQLException if no usable connection could be obtained, so a failed reconnect surfaces
+     * to the caller instead of handing back a null statement that only fails later as an NPE.
+     */
+    public abstract PreparedStatement preparedStatement(String query) throws SQLException;
 }
