@@ -48,6 +48,10 @@ public class UserWardrobeManager {
     private String npcName;
     @Getter
     private GameMode originalGamemode;
+
+    private boolean originalAllowFlight;
+
+    private boolean originalFlying;
     @Getter
     private final CosmeticUser user;
     @Getter
@@ -114,6 +118,8 @@ public class UserWardrobeManager {
         Player player = user.getPlayer();
 
         this.originalGamemode = player.getGameMode();
+        this.originalAllowFlight = player.getAllowFlight();
+        this.originalFlying = player.isFlying();
         if (WardrobeSettings.isReturnLastLocation()) {
             this.exitLocation = player.getLocation().clone();
         }
@@ -240,7 +246,6 @@ public class UserWardrobeManager {
         outsideViewers.remove(player);
 
         if (player == null) return;
-        if (!Bukkit.getServer().getAllowFlight()) player.setAllowFlight(false);
         MessagesUtil.sendMessage(player, "closed-wardrobe");
 
         Runnable run = () -> {
@@ -290,6 +295,13 @@ public class UserWardrobeManager {
             }
 
             player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+            // Give back exactly the flight the player walked in with, and only here: setGameMode
+            // above resets the ability, so anything restored earlier is wiped. Forcing it off
+            // instead left anyone who entered with flight on with a client still flying and a
+            // server that says it may not - which the vanilla floating check kicks for.
+            player.setAllowFlight(this.originalAllowFlight);
+            if (this.originalAllowFlight) player.setFlying(this.originalFlying);
 
             HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
             for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
